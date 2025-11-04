@@ -10,6 +10,8 @@ const schema = new mongoose.Schema({
   gang: { type: mongoose.Schema.Types.ObjectId, ref: 'Gang' },
   cooldowns: { type: Map, of: Number, default: new Map() },
   dailyStreak: { type: Number, default: 0 },
+  weeklyStreak: { type: Number, default: 0 },
+  lastWeeklyClaim: { type: Number, default: 0 },
   messageCount: { type: Number, default: 0 },
   lastStealMessages: { type: Number, default: 0 },
   weeklyTextMessages: { type: Number, default: 0 },

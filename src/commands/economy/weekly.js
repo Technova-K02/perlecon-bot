@@ -26,69 +26,40 @@ module.exports = {
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
-      // Calculate level bonus (user level affects weekly reward)
-      const levelBonus = Math.floor(WEEKLY_BASE_AMOUNT * (user.level * 0.1)); // 10% per level
+      // Calculate weekly streak bonus
+      let weeklyStreak = user.weeklyStreak || 0;
       
-      // Calculate daily streak bonus for weekly (if user has been consistent)
-      let consistencyBonus = 0;
-      const dailyStreak = user.dailyStreak || 0;
-      if (dailyStreak >= 7) {
-        consistencyBonus = Math.floor(WEEKLY_BASE_AMOUNT * 0.5); // 50% bonus for 7+ day streak
-      } else if (dailyStreak >= 3) {
-        consistencyBonus = Math.floor(WEEKLY_BASE_AMOUNT * 0.25); // 25% bonus for 3+ day streak
+      // Check if this is a consecutive weekly claim (within 8 days of last claim)
+      const lastWeeklyClaim = user.lastWeeklyClaim || 0;
+      const daysSinceLastClaim = Math.floor((now - lastWeeklyClaim) / (1000 * 60 * 60 * 24));
+      
+      if (daysSinceLastClaim <= 8 && lastWeeklyClaim > 0) {
+        weeklyStreak += 1;
+      } else {
+        weeklyStreak = 1; // Reset streak
       }
-
-      // Calculate gang bonus (if user is in a gang)
-      let gangBonus = 0;
-      if (user.gang) {
-        gangBonus = Math.floor(WEEKLY_BASE_AMOUNT * 0.2); // 20% bonus for gang members
-      }
-
-      const totalReward = WEEKLY_BASE_AMOUNT + levelBonus + consistencyBonus + gangBonus;
+      
+      // Calculate streak bonus (100 coins per week of streak)
+      const streakBonus = (weeklyStreak - 1) * 100;
+      const totalReward = WEEKLY_BASE_AMOUNT + streakBonus;
 
       // Give the weekly reward
       const updatedUser = await economy.addMoney(userId, totalReward, 'weekly');
 
-      // Update cooldown
+      // Update cooldown and streak
       updatedUser.cooldowns.set('weekly', now);
+      updatedUser.weeklyStreak = weeklyStreak;
+      updatedUser.lastWeeklyClaim = now;
       await updatedUser.save();
 
-      // Create detailed reward breakdown
-      let rewardMessage = `You claimed your weekly reward\n\n`;
-      rewardMessage += `💰 **Base Reward:** ${economy.formatMoney(WEEKLY_BASE_AMOUNT)} coins\n`;
+      // Create simple reward message
+      let rewardMessage = `You earned **${economy.formatMoney(totalReward)} coins**`;
       
-      if (levelBonus > 0) {
-        rewardMessage += `📈 **Level Bonus:** +${economy.formatMoney(levelBonus)} coins (Level ${user.level})\n`;
-      }
-      
-      if (consistencyBonus > 0) {
-        const streakText = dailyStreak >= 7 ? '7+ day streak' : '3+ day streak';
-        rewardMessage += `🔥 **Consistency Bonus:** +${economy.formatMoney(consistencyBonus)} coins (${streakText})\n`;
-      }
-      
-      if (gangBonus > 0) {
-        rewardMessage += `⚔️ **Gang Bonus:** +${economy.formatMoney(gangBonus)} coins (Gang member)\n`;
-      }
-      
-      rewardMessage += `\n**Total Earned:** ${economy.formatMoney(totalReward)} coins`;
-      rewardMessage += `\n**New Balance:** ${economy.formatMoney(updatedUser.pocket)} coins`;
-
-      // Add tips for maximizing rewards
-      let tips = '\n\n💡 **Tips to maximize your weekly reward:**\n';
-      if (levelBonus === 0 || user.level < 5) {
-        tips += '• Chat more to gain XP and level up for bigger bonuses\n';
-      }
-      if (consistencyBonus === 0) {
-        tips += '• Claim daily rewards consistently for consistency bonuses\n';
-      }
-      if (gangBonus === 0) {
-        tips += '• Join a gang for gang member bonuses\n';
-      }
-      if (levelBonus > 0 && consistencyBonus > 0 && gangBonus > 0) {
-        tips = '\n\n🏆 **You\'re maximizing all bonuses Great job**';
+      if (streakBonus > 0) {
+        rewardMessage += `\n**Weekly Streak Bonus:** +${economy.formatMoney(streakBonus)} coins (${weeklyStreak} week streak)`;
       }
 
-      message.channel.send(`🎊 **Weekly Reward Claimed**\n\n${rewardMessage}${tips}`);
+      message.channel.send(`**Weekly Reward Claimed**\n${rewardMessage}`);
 
     } catch (error) {
       console.error('Weekly command error:', error);

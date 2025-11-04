@@ -89,7 +89,7 @@ module.exports = {
       try {
         // await targetUser.send(`💰 You received **${economy.formatMoney(amount)} coins** from ${message.author.username}`).catch(() => {
           // If DM fails, send in channel instead
-          message.channel.send(`${targetUser}, you received **${economy.formatMoney(amount)} coins** from ${message.author.username}`);
+          // message.channel.send(`${targetUser}, you received **${economy.formatMoney(amount)} coins** from ${message.author.username}`);
         // });
       } catch (error) {
         // Ignore notification errors
