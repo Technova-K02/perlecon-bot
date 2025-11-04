@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const connectDB = require('./config/database');
@@ -10,7 +10,7 @@ const economy = require('./utils/economy');
 
 const allowedChannels = ['1434995380592054322', '1435006853116461229', '1435006834355208352'];
 
-const announcementchannel = '1429159497234124953';
+
 
 const client = new Client({
   intents: [
@@ -98,6 +98,8 @@ client.once('ready', async () => {
     console.error('Failed to initialize planning system:', error);
   }
 
+
+
   client.user.setActivity('Perlecon bot | .help', { type: 0 });
 });
 
@@ -157,76 +159,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   }
 });
 
-// ---- Automatic Booster Rewards ----
-client.on('guildMemberUpdate', async (oldMember, newMember) => {
-  try {
-    // Check if member just started boosting (premiumSince changed from null to a date)
-    const oldPremium = oldMember?.premiumSince;
-    const newPremium = newMember?.premiumSince;
 
-    console.log(' ' + oldPremium + ' , ' + newPremium + ' ');
-    console.log('hello');
-
-    if (newPremium && !oldPremium) {
-      const boosterReward = 20000;
-
-      try {
-        // Grant the booster reward
-        await economy.addMoney(newMember.user.id, boosterReward, 'booster_reward');
-
-        // Try to send a DM to the booster
-        try {
-          const dmEmbed = {
-            color: 0x00ff00,
-            title: '💎 Server Booster Reward!',
-            description: `Thank you for the boost! We sent you 20,000 coins to you safe.🎉`,
-            timestamp: new Date(),
-            footer: {
-              text: 'ChillZone Economy Bot'
-            }
-          };
-
-          // await newMember.user.send({ embeds: [dmEmbed] });
-
-        } catch (dmError) {
-          console.log(`Could not DM booster reward to ${newMember.user.username}`);
-        }
-
-        // Log the booster reward
-        console.log(`🎉 Automatic booster reward: ${economy.formatMoney(boosterReward)} coins granted to ${newMember.user.username} (${newMember.user.id})`);
-
-        const announcementChannelId = '1429159497234124953'; // Using one of the allowed channels as announcement channel
-        const announcementChannel = client.channels.cache.get(announcementChannelId);
-        if (announcementChannel) {
-          const announceEmbed = {
-            color: 0xff69b4,
-            title: '💎 New Server Booster!',
-            description: `Thank you ${newMember.user} for boosting our server!\n\n` +
-              `They've been rewarded **${economy.formatMoney(boosterReward)}** coins! 🎉`,
-            timestamp: new Date(),
-            footer: {
-              text: 'ChillZone Economy Bot'
-            }
-          };
-
-          try {
-            await announcementChannel.send({ embeds: [announceEmbed] });
-            // await msg.channel.send({ embeds: [announceEmbed] });
-          } catch (channelError) {
-            console.error('Failed to send booster announcement:', channelError);
-          }
-        } else {
-          console.log('Announcement channel not found for booster reward');
-        }
-
-      } catch (rewardError) {
-        console.error(`Failed to grant booster reward to ${newMember.user.username}:`, rewardError);
-      }
-    }
-  } catch (error) {
-    console.error('Booster reward tracking error:', error);
-  }
-});
 
 // ---- Event: messageCreate ----
 client.on('messageCreate', async msg => {
