@@ -128,17 +128,27 @@ module.exports = {
       await user.save();
 
       if (success) {
-        // Calculate coins stolen
-        let maxSteal = 2000; // Base max steal
+        // Calculate coins stolen with range-based system
+        let minSteal = 0; // Base minimum
+        let maxSteal = 2000; // Base maximum
         
-        // Titan lockpick increases max steal cap by 2000
+        // Apply lockpick bonuses to both min and max
+        let lockpickBonus = 0;
         if (lockpickUsed === 'Titan Lockpick') {
-          maxSteal += 2000;
+          lockpickBonus = 2000; // +2000 to both min and max
         }
         
-        const minSteal = Math.min(500, targetGang.vault);
+        minSteal += lockpickBonus;
+        maxSteal += lockpickBonus;
+        
+        // Ensure we don't steal more than what's available
+        const actualMinSteal = Math.min(minSteal, targetGang.vault);
         const actualMaxSteal = Math.min(maxSteal, targetGang.vault);
-        const coinsStolen = Math.floor(Math.random() * (actualMaxSteal - minSteal + 1)) + minSteal;
+        
+        // If target has less than minimum, steal what they have
+        const coinsStolen = actualMinSteal >= actualMaxSteal 
+          ? actualMinSteal 
+          : Math.floor(Math.random() * (actualMaxSteal - actualMinSteal + 1)) + actualMinSteal;
         
         // Transfer coins
         targetGang.vault -= coinsStolen;
@@ -155,10 +165,11 @@ module.exports = {
 
         let resultMessage = `**${attackerGang.name}** successfully robbed **${targetGang.name}**!\n\n` +
           `**Coins Stolen:** ${economy.formatMoney(coinsStolen)}\n` +
+          `**Steal Range:** ${economy.formatMoney(minSteal)} - ${economy.formatMoney(maxSteal)}\n` +
           `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n`;
         
         if (lockpickUsed) {
-          resultMessage += `**Tool Used:** ${lockpickUsed}\n`;
+          resultMessage += `**Tool Used:** ${lockpickUsed} (+${economy.formatMoney(lockpickBonus)} range bonus)\n`;
           if (lockpickBroken) {
             resultMessage += `**${lockpickUsed} broke during the robbery!**\n`;
           }
