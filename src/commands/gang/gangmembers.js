@@ -32,7 +32,7 @@ module.exports = {
 
       // Add members
       for (const memberId of gang.members) {
-        if (memberId == gang.leaderId) {
+        if (memberId !== gang.leaderId) {
           try {
             const member = await message.client.users.fetch(memberId);
             membersList += `👤 **${member.username}**\n`;

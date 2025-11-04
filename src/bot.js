@@ -508,7 +508,7 @@ client.on('interactionCreate', async (interaction) => {
         invitation.status = 'declined';
         await invitation.save();
 
-        const declineEmbed = embeds.info(' ', ' '
+        const declineEmbed = embeds.warning(' ', ' '
           // 'Invitation Declined',
           // `${interaction.user} has declined the invitation to join **${gang.name}**.`
         );
