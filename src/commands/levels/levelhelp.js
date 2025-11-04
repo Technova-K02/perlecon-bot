@@ -9,8 +9,8 @@ module.exports = {
       '**Experience & Levels:**\n' +
       '• `.level <user>` - View user\'s level and XP\n' +
       '• `.rank <user>` - View user\'s server ranking position\n' +
-      '• `.leaderboard(.lb)` - Top users by level\n' +
-      '• `.weeklylb` - Weekly activity leaderboard\n' +
+      '• `.levellb` - Top users by level\n' +
+      '• `.lb` - Weekly activity leaderboard\n' +
       '• `.coinslb` - Richest users leaderboard\n' +
       '• `.richest` - Richest user in the server\n\n' +
       

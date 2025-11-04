@@ -82,6 +82,7 @@ module.exports = {
             '`.rank <user>` ' +
             '`.richest` ' +
             '`.lb` ' +
+            '`.levellb` ' +
             '`.coinslb` ' +
             '`.ganglb` ',
           inline: true

@@ -3,8 +3,8 @@ const embeds = require('../../utils/embeds');
 const economy = require('../../utils/economy');
 
 module.exports = {
-  name: 'leaderboard',
-  aliases: ['lb', 'top'],
+  name: 'levellb',
+  // aliases: ['lb', 'top'],
   description: 'View the top users by level and XP',
   async execute(msg, args) {
     try {

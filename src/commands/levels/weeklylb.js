@@ -1,8 +1,8 @@
 const User = require('../../models/User');
 
 module.exports = {
-  name: 'weeklylb',
-  aliases: ['wlb', 'weeklyboard'],
+  name: 'lb',
+  // aliases: ['wlb', 'weeklyboard'],
   description: 'View weekly activity leaderboard',
   async execute(message) {
     try {

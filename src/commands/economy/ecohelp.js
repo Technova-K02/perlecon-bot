@@ -8,7 +8,7 @@ module.exports = {
       'Economy Help',
       '> Build your wealth and become the richest user\n > Earn 20,000 coins for every server boost\n')
       .addFields(
-        { name: 'Basic', value: '`.work`\n`.coins`\n`.p`\n`.s`\n`.daily`\n`.weekly`', inline: true },
+        { name: 'Basic', value: '`.work`\n`.coins`\n`.p <user>`\n`.s <user>`\n`.daily`\n`.weekly`', inline: true },
         { name: 'Banking', value: '`.put <amount>`\n`.take <amount>`\n`.putall`\n`.takeall`', inline: true },
         { name: 'Transactions', value: '`.give <amount> <@user>`\n`.transactions`\n`.grant <amount> <@user>`', inline: true },
         { name: 'Risk', value: '`.steal <@user>`', inline: true },
