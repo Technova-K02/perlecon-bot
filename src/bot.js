@@ -86,46 +86,20 @@ const commandList = [
 ];
 
 // ---- Event: ready ----
-// client.once('ready', async () => {
-//   console.log(`Logged in as ${client.user.tag}`);
-//   console.log(`Serving ${client.guilds.cache.size} servers`);
+client.once('ready', async () => {
+  console.log(`Logged in as ${client.user.tag}`);
+  console.log(`Serving ${client.guilds.cache.size} servers`);
 
-//   // Initialize planning system
-//   try {
-//     await planningSystem.initialize(client);
-//     await planningSystem.startBackgroundTasks();
-//   } catch (error) {
-//     console.error('Failed to initialize planning system:', error);
-//   }
+  // Initialize planning system
+  try {
+    await planningSystem.initialize(client);
+    await planningSystem.startBackgroundTasks();
+  } catch (error) {
+    console.error('Failed to initialize planning system:', error);
+  }
 
-//   client.user.setActivity('Perlecon bot | .help', { type: 0 });
-
-//   // Reward existing boosters on startup
-//   try {
-//     for (const guild of client.guilds.cache.values()) {
-//       await guild.members.fetch(); // Ensure all members are cached
-
-//       const boosters = guild.members.cache.filter(member =>
-//         member.premiumSince !== null && !member.user.bot
-//       );
-
-//       if (boosters.size > 0) {
-//         console.log(`Found ${boosters.size} existing boosters in ${guild.name}`);
-
-//         for (const [userId, member] of boosters) {
-//           try {
-//             await economy.addMoney(userId, 20000, 'existing_booster_reward');
-//             console.log(`Rewarded existing booster: ${member.user.username}`);
-//           } catch (error) {
-//             console.error(`Failed to reward existing booster ${member.user.username}:`, error);
-//           }
-//         }
-//       }
-//     }
-//   } catch (error) {
-//     console.error('Error rewarding existing boosters:', error);
-//   }
-// });
+  client.user.setActivity('Perlecon bot | .help', { type: 0 });
+});
 
 // ---- Voice Activity Tracking ----
 client.on('voiceStateUpdate', async (oldState, newState) => {
@@ -221,7 +195,8 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         // Log the booster reward
         console.log(`🎉 Automatic booster reward: ${economy.formatMoney(boosterReward)} coins granted to ${newMember.user.username} (${newMember.user.id})`);
 
-        const announcementChannel = client.channels.cache.get(announcementchannel);
+        const announcementChannelId = '1429159497234124953'; // Using one of the allowed channels as announcement channel
+        const announcementChannel = client.channels.cache.get(announcementChannelId);
         if (announcementChannel) {
           const announceEmbed = {
             color: 0xff69b4,
@@ -256,7 +231,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 // ---- Event: messageCreate ----
 client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
-  
+
 
   // Ignore messages from bots and check if the message is in an allowed channel
   if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;

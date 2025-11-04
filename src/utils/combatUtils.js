@@ -100,7 +100,7 @@ function calculateSuccessRate(baseRate, modifiers = {}) {
  * @returns {Object} - Object with hours and milliseconds
  */
 function generateKidnapDuration() {
-  const hours = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3 hours
+  const hours = 1; // 1, 2, or 3 hours
   const milliseconds = hours * 60 * 60 * 1000;
   return { hours, milliseconds };
 }
