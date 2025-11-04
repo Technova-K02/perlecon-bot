@@ -1,0 +1,127 @@
+const User = require('../../models/User');
+const Gang = require('../../models/Gang');
+const embeds = require('../../utils/embeds');
+const economy = require('../../utils/economy');
+const { getBaseName, getWallName } = require('../../utils/gangUpgrades');
+
+module.exports = {
+  name: 'base12321',
+  aliases: ['bv'],
+  description: 'View or manage your gang base',
+  async execute(message, args) {
+    try {
+      const user = await User.findOne({ userId: message.author.id });
+      if (!user || !user.gang) {
+        const errorEmbed = embeds.error('No Gang', 'You are not in a gang');
+        return message.channel.send({ embeds: [errorEmbed] });
+      }
+
+      const gang = await Gang.findById(user.gang);
+      if (!gang) {
+        const errorEmbed = embeds.error('Gang Error', 'Gang not found');
+        return message.channel.send({ embeds: [errorEmbed] });
+      }
+
+      // Ensure base and upgrades objects exist (for older gangs)
+      if (!gang.base) {
+        gang.base = {
+          level: 1,
+          guards: 4,
+          defenses: 0,
+          hp: 250,
+          lastRaid: null
+        };
+      }
+      if (!gang.upgrades) {
+        gang.upgrades = {
+          weapons: 1,
+          walls: 1,
+          guardsTraining: 1,
+          medicTraining: 1
+        };
+      }
+      if (!gang.army) {
+        gang.army = {
+          guards: 0,
+          medics: 0
+        };
+      }
+      // Save if any initialization was needed
+      if (!gang.base || !gang.upgrades || !gang.army) {
+        await gang.save();
+      }
+
+      // Show base info by default
+      const lastRaidText = gang.base.lastRaid
+        ? `${Math.floor((Date.now() - gang.base.lastRaid) / (1000 * 60 * 60))} hours ago`
+        : 'Never';
+
+      // Get base stats from progression table
+      const baseStats = getBaseStats(gang.base.level);
+      const currentHP = gang.base.hp || baseStats.maxHP;
+
+      // Get army counts
+      const guards = gang.army?.guards || 0;
+      const medics = gang.army?.medics || 0;
+      const maxGuards = baseStats.maxGuards;
+      const maxMedics = baseStats.maxMedics;
+
+      // Get upgrade levels (default to 1 if not set)
+      const wallLevel = gang.upgrades?.walls || 1;
+      const wallName = getWallName(wallLevel);
+
+      const embed = embeds.info(
+        `${gang.name} Base - ${getBaseName(gang.base.level)}`,
+        `**Level:** ${gang.base.level}\n` +
+        `**Health:** ${currentHP}/${baseStats.maxHP} HP (${getBaseCondition(currentHP, baseStats.maxHP)})\n` +
+        `**Safe Capacity:** ${economy.formatMoney(baseStats.safeCapacity)} coins\n` +
+        `**Gang Safe:** ${economy.formatMoney(gang.vault)} coins\n` +
+        `**Guards:** ${guards}/${maxGuards}\n` +
+        `**Medics:** ${medics}/${maxMedics}\n` +
+        `**Walls:** ${wallName} (lvl ${wallLevel})\n` +
+        `**Last Raided:** ${lastRaidText}\n` +
+        `**Hostages:** ${gang.hostages}\n\n` +
+        `💡 **Tip:** Use \`.upgrade base\` to upgrade your base level!`
+      );
+
+      return message.channel.send({ embeds: [embed] });
+
+
+
+    } catch (error) {
+      console.error('Base error:', error);
+      const errorEmbed = embeds.error('Command Error', 'An error occurred while managing the base.');
+      message.channel.send({ embeds: [errorEmbed] });
+    }
+  }
+};
+
+// Base progression table from the image
+function getBaseStats(level) {
+  const baseData = {
+    1: { name: 'Trailer', maxHP: 250, safeCapacity: 10000, maxGuards: 4, maxMedics: 2, upgradeCost: 0 },
+    2: { name: 'Cabin', maxHP: 500, safeCapacity: 20000, maxGuards: 6, maxMedics: 3, upgradeCost: 10000 },
+    3: { name: 'Warehouse', maxHP: 900, safeCapacity: 35000, maxGuards: 8, maxMedics: 4, upgradeCost: 20000 },
+    4: { name: 'Bunker', maxHP: 1400, safeCapacity: 55000, maxGuards: 10, maxMedics: 5, upgradeCost: 35000 },
+    5: { name: 'Compound', maxHP: 2000, safeCapacity: 80000, maxGuards: 12, maxMedics: 6, upgradeCost: 55000 },
+    6: { name: 'Fortress', maxHP: 2800, safeCapacity: 110000, maxGuards: 14, maxMedics: 7, upgradeCost: 80000 },
+    7: { name: 'Citadel', maxHP: 3800, safeCapacity: 150000, maxGuards: 16, maxMedics: 8, upgradeCost: 110000 },
+    8: { name: 'Kingdom', maxHP: 5000, safeCapacity: 200000, maxGuards: 18, maxMedics: 9, upgradeCost: 150000 }
+  };
+
+  return baseData[level] || baseData[1];
+}
+
+function getBaseCondition(currentHP, maxHP) {
+  const percentage = (currentHP / maxHP) * 100;
+  if (percentage >= 90) return '🟢 Excellent';
+  if (percentage >= 70) return '🟡 Good';
+  if (percentage >= 50) return '🟠 Damaged';
+  if (percentage >= 25) return '🔴 Heavily Damaged';
+  return '💀 Critical';
+}
+
+
+
+
+

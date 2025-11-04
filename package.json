@@ -1,0 +1,28 @@
+{
+  "name": "chillzone-discord-bot",
+  "version": "1.0.0",
+  "description": "Advanced Discord economy bot with gangs, pets, casino, and leveling system",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "node src/bot.js",
+    "dev": "nodemon src/bot.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "mongoose": "^8.0.3",
+    "react-script": "^2.0.5",
+    "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "economy",
+    "gaming"
+  ],
+  "author": "Tony",
+  "license": "MIT"
+}
