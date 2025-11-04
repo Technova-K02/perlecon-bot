@@ -24,7 +24,7 @@ module.exports = {
       return msg.channel.send({ embeds: [errorEmbed] });
     }
 
-    const win = Math.random() < 0.5;
+    const win = Math.random() < 0.4;
     const result = win ? 'heads' : 'tails';
 
     let updatedUser;

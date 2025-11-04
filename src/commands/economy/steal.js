@@ -61,12 +61,12 @@ module.exports = {
       }
 
       // Calculate steal amount (30-115 coins, but not more than target has)
-      const maxSteal = Math.min(115, target.pocket);
-      const minSteal = Math.min(30, target.pocket);
+      const maxSteal = Math.min(150, target.pocket);
+      const minSteal = Math.min(50, target.pocket);
       const stealAmount = Math.floor(Math.random() * (maxSteal - minSteal + 1)) + minSteal;
 
       // 50% chance of getting caught
-      const caught = Math.random() < 0.5;
+      const caught = Math.random() < 0.4;
 
       // Update last steal message count
       thief.lastStealMessages = thief.messageCount;
@@ -75,7 +75,7 @@ module.exports = {
       if (caught) {
         // User got caught - loses money (safe first, then pocket)
         const totalMoney = thief.bank + thief.pocket;
-        let penalty = Math.min(100, totalMoney); // Can't lose more than they have
+        let penalty = Math.min(150, totalMoney); // Can't lose more than they have
         let penaltyFromSafe = 0;
         let penaltyFromPocket = 0;
         let penaltyMessage = '';

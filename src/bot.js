@@ -8,14 +8,17 @@ const { planningSystem } = require('./planning');
 const leveling = require('./utils/leveling');
 const economy = require('./utils/economy');
 
-const allowedChannels = ['1434995380592054322', '1372006892616028219', '1435006853116461229', '1435006834355208352'];
+const allowedChannels = ['1434995380592054322', '1435006853116461229', '1435006834355208352'];
+
+const announcementchannel = '1429159497234124953';
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMembers
   ]
 });
 
@@ -48,6 +51,39 @@ try {
 } catch (error) {
   console.error('Error loading commands:', error);
 }
+
+// ---- Command List ----
+const commandList = [
+  // Admin Commands
+  'disbandgang', 'grant', 'resetgangs',
+
+  // Casino Commands
+  'baccarat', 'bingo', 'blackjack', 'luckhelp', 'luckstats', 'coinflip', 'crash', 'dice',
+  'keno', 'lottery', 'lucky', 'mines', 'plinko', 'poker', 'roulette', 'slots', 'slotshelp', 'wheel',
+
+  // Economy Commands
+  'coins', 'coinslb', 'daily', 'put', 'ecohelp', 'give', 'p', 'putall', 'richest', 's',
+  'ssfadf', 'steal', 'takeall', 'transactions', 'weekly', 'take', 'work', 'pocket', 'safe',
+
+  // Gang Commands
+  'army', 'base12321', 'buy', 'makegang', 'gang', 'bangang', 'battlegang', 'descriptiongang', 'disgang',
+  'helpgang', 'infogang', 'invitations', 'addgang', 'kickgang', 'ganglb', 'leavegang',
+  'listgang', 'members', 'officergang', 'promotegang', 'putgang', 'renamegang', 'searchgang132',
+  'settingsgang', 'statsgang321312', 'getgang', 'safegang', 'hire', 'hostages', 'info', 'kidnap',
+  'leavebase', 'raid', 'repair', 'return', 'rob', 'tools', 'upgrade', 'upgrades',
+
+  // Leveling Commands
+  'levellb', 'level', 'levelhelp', 'rank', 'lb', 'weeklylbfdsf',
+
+  // Planning Commands
+  'challenge', 'event', 'planhelp', 'planning', 'remind', 'schedule', 'tournament',
+
+  // Shop Commands
+  'inventory', 'inv', 'shop', 'shophelp', 'wardrobe',
+
+  // Utility Commands
+  'help'
+];
 
 // ---- Event: ready ----
 client.once('ready', async () => {
@@ -121,15 +157,88 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   }
 });
 
+// ---- Automatic Booster Rewards ----
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+  try {
+    // Check if member just started boosting (premiumSince changed from null to a date)
+    const wasNotBoosting = !oldMember.premiumSince;
+    const isNowBoosting = newMember.premiumSince;
+
+    console.log(" " + wasNotBoosting + isNowBoosting + " ");
+
+    if (!newMember.user.bot) {
+      const boosterReward = 20000;
+
+      try {
+        // Grant the booster reward
+        await economy.addMoney(newMember.user.id, boosterReward, 'booster_reward');
+
+        // Try to send a DM to the booster
+        try {
+          const dmEmbed = {
+            color: 0x00ff00,
+            title: '💎 Server Booster Reward!',
+            description: `Thank you for the boost! We sent you 20,000 coins to you safe.🎉`,
+            timestamp: new Date(),
+            footer: {
+              text: 'ChillZone Economy Bot'
+            }
+          };
+
+          await newMember.user.send({ embeds: [dmEmbed] });
+
+        } catch (dmError) {
+          console.log(`Could not DM booster reward to ${newMember.user.username}`);
+        }
+
+        // Log the booster reward
+        console.log(`🎉 Automatic booster reward: ${economy.formatMoney(boosterReward)} coins granted to ${newMember.user.username} (${newMember.user.id})`);
+
+        // Send announcement to the announcement channel
+        const announcementChannelId = announcementchannel; // Using one of the allowed channels as announcement channel
+        const announcementChannel = newMember.guild.channels.cache.get(announcementChannelId);
+        if (announcementChannel) {
+          const announceEmbed = {
+            color: 0xff69b4,
+            title: '💎 New Server Booster!',
+            description: `Thank you ${newMember.user} for boosting our server!\n\n` +
+              `They've been rewarded **${economy.formatMoney(boosterReward)}** coins! 🎉`,
+            timestamp: new Date(),
+            footer: {
+              text: 'ChillZone Economy Bot'
+            }
+          };
+
+          try {
+            await announcementChannel.send({ embeds: [announceEmbed] });
+            // await msg.channel.send({ embeds: [announceEmbed] });
+          } catch (channelError) {
+            console.error('Failed to send booster announcement:', channelError);
+          }
+        } else {
+          console.log('Announcement channel not found for booster reward');
+        }
+
+      } catch (rewardError) {
+        console.error(`Failed to grant booster reward to ${newMember.user.username}:`, rewardError);
+      }
+    }
+  } catch (error) {
+    console.error('Booster reward tracking error:', error);
+  }
+});
+
 // ---- Event: messageCreate ----
 client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
 
   // Ignore messages from bots and check if the message is in an allowed channel
   if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
-
-  // Auto-delete non-command messages
-  if (!msg.content.startsWith(config.prefix)) {
+  const args1 = msg.content.slice(config.prefix.length).trim().split(/ +/);
+  const cmdName1 = args1.shift().toLowerCase();
+  
+  if (!msg.content.startsWith(config.prefix) || !commandList.includes(cmdName1)) {
+    // console.log('deletable');
     try {
       if (msg.deletable) {
         setTimeout(async () => {
