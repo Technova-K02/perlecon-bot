@@ -45,7 +45,7 @@ module.exports = {
         .map(item => {
           const shopItem = SHOP_ITEMS[item.id];
           const displayName = shopItem?.displayName || item.id;
-          return `**${displayName}** - ${item.description}`;
+          return `${displayName}`;
         })
         .join('\n');
       

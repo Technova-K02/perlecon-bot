@@ -34,7 +34,7 @@ module.exports = {
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
-      if (name.length < 3 || name.length > 20) {
+      if (name.length < 3 || name.length > 100) {
         const errorEmbed = embeds.error('Invalid Length', 'Gang name must be between 3 and 20 characters');
         return message.channel.send({ embeds: [errorEmbed] });
       }

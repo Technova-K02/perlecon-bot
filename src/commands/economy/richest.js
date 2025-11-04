@@ -38,41 +38,41 @@ module.exports = {
 
       const embed = embeds.success(
         'Richest User in Server',
-        `**${displayUser.username}** is the richest user in the server.\n\n` +
-        `Safe Balance: ${economy.formatMoney(richestUser.bank)} coins\n`
+        `**${displayUser.username}** is the richest user in the server.\n\n` 
+        // `Safe Balance: ${economy.formatMoney(richestUser.bank)} coins\n`
         // `Gang: ${gangInfo}`
       );
 
       // Add top 3 richest users
-      const topUsers = await User.find({ bank: { $gt: 0 } }).sort({ bank: -1 }).limit(3);
+      // const topUsers = await User.find({ bank: { $gt: 0 } }).sort({ bank: -1 }).limit(3);
       
-      if (topUsers.length > 1) {
-        let topUsersText = '';
+      // if (topUsers.length > 1) {
+      //   let topUsersText = '';
         
-        for (let i = 0; i < topUsers.length; i++) {
-          const user = topUsers[i];
-          let userDisplay;
+      //   for (let i = 0; i < topUsers.length; i++) {
+      //     const user = topUsers[i];
+      //     let userDisplay;
           
-          try {
-            userDisplay = await msg.client.users.fetch(user.userId);
-          } catch (error) {
-            userDisplay = { username: 'Unknown User' };
-          }
+      //     try {
+      //       userDisplay = await msg.client.users.fetch(user.userId);
+      //     } catch (error) {
+      //       userDisplay = { username: 'Unknown User' };
+      //     }
 
-          const position = i + 1;
-          const medal = position === 1 ? '1st' : position === 2 ? '2nd' : '3rd';
+      //     const position = i + 1;
+      //     const medal = position === 1 ? '1st' : position === 2 ? '2nd' : '3rd';
           
-          topUsersText += `${medal} **${userDisplay.username}** - ${economy.formatMoney(user.bank)} coins\n`;
-        }
+      //     topUsersText += `${medal} **${userDisplay.username}** - ${economy.formatMoney(user.bank)} coins\n`;
+      //   }
 
-        embed.addFields({
-          name: 'Top 3 Richest Users',
-          value: topUsersText,
-          inline: false
-        });
-      }
+      //   // embed.addFields({
+      //   //   name: 'Top 3 Richest Users',
+      //   //   value: topUsersText,
+      //   //   inline: false
+      //   // });
+      // }
 
-      embed.setFooter({ text: 'Based on safe coins' });
+      // embed.setFooter({ text: 'Based on safe coins' });
 
       msg.channel.send({ embeds: [embed] });
 

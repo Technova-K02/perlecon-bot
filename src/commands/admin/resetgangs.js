@@ -41,7 +41,7 @@ module.exports = {
 
       const successEmbed = embeds.success(
         'All Gangs Reset',
-        `Successfully disbanded **${deleteResult.deletedCount}** gangs.\n`
+        // `Successfully disbanded **${deleteResult.deletedCount}** gangs.\n`
         `**Total Members Affected:** ${totalMembers}\n`
         // `**Action:** All gang data has been permanently deleted\n` +
         // `**Status:** All users can now create or join new gangs\n\n` +
@@ -52,7 +52,7 @@ module.exports = {
 
       // Log the action
       console.log(`Gang reset performed by ${message.author.username} (${message.author.id})`);
-      console.log(`Disbanded ${deleteResult.deletedCount} gangs affecting ${totalMembers} members`);
+      // console.log(`Disbanded ${deleteResult.deletedCount} gangs affecting ${totalMembers} members`);
 
     } catch (error) {
       console.error('Reset gangs error:', error);

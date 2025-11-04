@@ -230,9 +230,9 @@ module.exports = {
       await transaction.save();
 
       // Create enhanced success message for tools
-      let successMessage = `You bought **${item.displayName}** for ${economy.formatMoney(item.price)} coins\n\n` +
-        `**Item:** ${item.description}\n` +
-        `**Category:** ${item.category}\n\n`;
+      let successMessage = `You bought **${item.displayName}** for ${economy.formatMoney(item.price)} coins\n\n`;
+        // `**Item:** ${item.description}\n` +
+        // `**Category:** ${item.category}\n\n`;
 
       if (item.category === 'Tools') {
         successMessage = `You bought **${item.displayName}** for ${economy.formatMoney(item.price)} coins\n\n` +
@@ -244,7 +244,7 @@ module.exports = {
           `Use \`.tools\` to view all gang tools.\n\n`;
       }
 
-      successMessage += `**New Balance:** ${economy.formatMoney(user.pocket)} coins`;
+      // successMessage += `**New Balance:** ${economy.formatMoney(user.pocket)} coins`;
 
       const successEmbed = embeds.success('Purchase Successful', successMessage);
 

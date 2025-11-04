@@ -16,6 +16,7 @@ const schema = new mongoose.Schema({
   lastStealMessages: { type: Number, default: 0 },
   weeklyTextMessages: { type: Number, default: 0 },
   weeklyVoiceMinutes: { type: Number, default: 0 },
+  weeklyXP: { type: Number, default: 0 },
   voiceJoinTime: { type: Number, default: null },
   lastWeeklyReset: { type: Date, default: Date.now },
   inventory: { type: [String], default: [] },

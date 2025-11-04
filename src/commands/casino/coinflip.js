@@ -7,10 +7,10 @@ module.exports = {
   description: 'Bet coins on a coinflip',
   async execute(msg, args) {
     const bet = parseInt(args[0]);
-    if (isNaN(bet) || bet <= 5000) {
+    if (isNaN(bet) || bet < 5000) {
       const errorEmbed = embeds.error(
         'Invalid Bet',
-        'Usage: `coinflip <amount>`\nExample: `coinflip 100`'
+        'The minimum amount is 5000.'
       );
       return msg.channel.send({ embeds: [errorEmbed] });
     }

@@ -37,16 +37,16 @@ module.exports = {
       }
 
       // Get amount from arguments (now first argument)
-      const amount = parseInt(args[0]);
+      const amount = parseInt(args[1]);
       if (!amount || isNaN(amount) || amount <= 0) {
-        const errorEmbed = embeds.error('Invalid Amount', 'Please enter a valid positive amount\nUsage: `.give <amount> <@user>`');
+        const errorEmbed = embeds.error('Invalid Amount', 'Please enter a valid positive amount\nUsage: `.give <@user>` <amount>');
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
       // Check if user mentioned someone (now second argument)
       const targetUser = message.mentions.users.first();
       if (!targetUser) {
-        const errorEmbed = embeds.error('Invalid User', 'Please mention a user to send money to\nUsage: `.give <amount> <@user>`');
+        const errorEmbed = embeds.error('Invalid User', 'Please mention a user to send money to\nUsage: `.give <@user> <amount>`');
         return message.channel.send({ embeds: [errorEmbed] });
       }
 

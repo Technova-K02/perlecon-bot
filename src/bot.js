@@ -88,11 +88,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const timeSpent = Math.floor((Date.now() - user.voiceJoinTime) / 60000); // Convert to minutes
         user.weeklyVoiceMinutes += timeSpent;
         user.voiceJoinTime = null;
-        await user.save();
+        await user.save(); 
 
         // Award total XP for voice activity (1 XP per minute)
         if (timeSpent > 0) {
-          await leveling.addXp(userId, Math.floor(timeSpent / 5) * 5);
+          const gainXP = Math.floor(timeSpent / 5) * 5;
+          await leveling.addXp(userId, gainXP);
+          // await leveling.addWeeklyXp(userId, gainXP);
         }
       }
     }
@@ -108,7 +110,9 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
         // Award total XP for voice activity (1 XP per minute)
         if (timeSpent > 0) {
-          await leveling.addXp(userId, Math.floor(timeSpent / 5) * 5);
+          const gainXP = Math.floor(timeSpent / 5) * 5;
+          await leveling.addXp(userId, gainXP);
+          // await leveling.addWeeklyXp(userId, gainXP);
         }
       }
     }
@@ -140,7 +144,9 @@ client.on('messageCreate', async msg => {
     // Award XP (1 XP per message with cooldown)
     const lastXp = await cooldowns.getCooldown(msg.author.id, 'xp');
     if (!lastXp) {
-      const result = await leveling.addXp(msg.author.id, config.leveling.xpPerMessage);
+      const gainXP = config.leveling.xpPerMessage;
+      const result = await leveling.addXp(msg.author.id, gainXP);
+      // const res = await leveling.addWeeklyXp(msg.author.id, gainXP);
 
       if (result && result.leveledUp) {
         const embeds = require('./utils/embeds');
@@ -392,6 +398,7 @@ async function resetWeeklyStats() {
     await User.updateMany({}, {
       weeklyTextMessages: 0,
       weeklyVoiceMinutes: 0,
+      weeklyXP: 0,
       lastWeeklyReset: new Date()
     });
     console.log('Weekly stats reset completed');

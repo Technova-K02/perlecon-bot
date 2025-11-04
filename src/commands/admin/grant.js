@@ -12,11 +12,11 @@ module.exports = {
     }
 
     if (args.length < 2) {
-      const errorEmbed = embeds.error('Invalid Usage', 'Usage: `.grant <amount> <@user>`');
+      const errorEmbed = embeds.error('Invalid Usage', 'Usage: `.grant <@user>` <amount>');
       return message.channel.send({ embeds: [errorEmbed] });
     }
 
-    const amount = parseInt(args[0]);
+    const amount = parseInt(args[1]);
     if (isNaN(amount) || amount <= 0) {
       const errorEmbed = embeds.error('Invalid Amount', 'Please enter a valid positive number.');
       return message.channel.send({ embeds: [errorEmbed] });

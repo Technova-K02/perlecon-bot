@@ -113,14 +113,14 @@ module.exports = {
         });
         await transaction.save();
 
-        message.channel.send(`🚨 **You got caught** You tried to steal from ${targetUser.username} but got caught\n\n${penaltyMessage}`);
+        message.channel.send(`**You got caught** stealing and ${penaltyMessage}.`);
         
         // Notify the target
         try {
           // await targetUser.send(`**${message.author.username}** tried to steal from you but got caught`).catch(() => {
             // message.channel.send(`${targetUser}, someone tried to steal from you but got caught`);
           // });
-        } catch (error) {
+        } catch (error) { 
           console.log('Could not send steal notification:', error.message);
         }
 
@@ -142,7 +142,7 @@ module.exports = {
         });
         await transaction.save();
 
-        message.channel.send(`💰 **Steal successful** You stole **${economy.formatMoney(stealAmount)} coins** from ${targetUser.username}`);
+        message.channel.send(`**Steal successful** You stole **${economy.formatMoney(stealAmount)} coins** from ${targetUser.username}.`);
         
         // Notify the target
         try {

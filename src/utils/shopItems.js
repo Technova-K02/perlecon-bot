@@ -4,24 +4,13 @@ const SHOP_ITEMS = {
   'orange-cat': { price: 6000, category: 'Cats', description: 'An orange cat emoji', displayName: 'Orange Cat', emoji: 'orangecat', emoji_id: '1434997578335785052' },
   'l-cat': { price: 7000, category: 'Cats', description: 'L cat emoji', displayName: 'L Cat', emoji: 'lcat', emoji_id: '1434997573738823711' },
   'w-cat': { price: 8000, category: 'Cats', description: 'W cat emoji', displayName: 'W Cat', emoji: 'wcat', emoji_id: '1434997590042214622' },
-  'galaxy-cat': { price: 12000, category: 'Cats', description: 'Galaxy cat emoji', displayName: 'Galaxy Cat', emoji: 'galaxycat', emoji_id: '1434997562867318916' },
   'trippin-cat': { price: 9000, category: 'Cats', description: 'Trippin cat emoji', displayName: 'Trippin Cat', emoji: 'trippincat', emoji_id: '1434997581091438664' },
   'zoom-cat': { price: 10000, category: 'Cats', description: 'Zoom cat emoji', displayName: 'Zoom Cat', emoji: 'zoomcat', emoji_id: '1434997593913430166' },
-  'gold-cat': { price: 13000, category: 'Cats', description: 'Cat gold emoji', displayName: 'Gold Cat', emoji: 'goldgradient', emoji_id: '1434997569058242710' },
   'void-cat': { price: 11000, category: 'Cats', description: 'Cat void emoji', displayName: 'Void Cat', emoji: 'voidgradient', emoji_id: '1434997590042214622' },
+  'galaxy-cat': { price: 12000, category: 'Cats', description: 'Galaxy cat emoji', displayName: 'Galaxy Cat', emoji: 'galaxycat', emoji_id: '1434997562867318916' },
+  'gold-cat': { price: 13000, category: 'Cats', description: 'Cat gold emoji', displayName: 'Gold Cat', emoji: 'goldgradient', emoji_id: '1434997569058242710' },
 
   // Name Styles
-  'flame-style': {
-    price: 75000,
-    category: 'Styles',
-    description: 'Flame name style with fiery effects.',
-    displayName: 'Flame Style',
-    type: 'Name Style',
-    usedFor: 'Name Display',
-    effect: 'Flame styling for your name',
-    emoji: 'flamestyle',
-    emoji_id: '1434997483725000817'
-  },
   'cyan-style': {
     price: 25000,
     category: 'Styles',
@@ -33,17 +22,6 @@ const SHOP_ITEMS = {
     emoji: 'cyanstyle',
     emoji_id: '1434997480172556388'
   },
-  'immo-style': {
-    price: 150000,
-    category: 'Styles',
-    description: 'Immortal name style with divine effects.',
-    displayName: 'Immo Style',
-    type: 'Name Style',
-    usedFor: 'Name Display',
-    effect: 'Immortal styling for your name',
-    emoji: 'immostyle',
-    emoji_id: '1434997485553717390'
-  },
   'lavender-style': {
     price: 50000,
     category: 'Styles',
@@ -54,6 +32,28 @@ const SHOP_ITEMS = {
     effect: 'Lavender styling for your name',
     emoji: 'lavenderstyle',
     emoji_id: '1434997488288403547'
+  },
+  'flame-style': {
+    price: 75000,
+    category: 'Styles',
+    description: 'Flame name style with fiery effects.',
+    displayName: 'Flame Style',
+    type: 'Name Style',
+    usedFor: 'Name Display',
+    effect: 'Flame styling for your name',
+    emoji: 'flamestyle',
+    emoji_id: '1434997483725000817'
+  },
+  'immo-style': {
+    price: 150000,
+    category: 'Styles',
+    description: 'Immortal name style with divine effects.',
+    displayName: 'Immo Style',
+    type: 'Name Style',
+    usedFor: 'Name Display',
+    effect: 'Immortal styling for your name',
+    emoji: 'immostyle',
+    emoji_id: '1434997485553717390'
   },
   'vip-style': {
     price: 1000000,

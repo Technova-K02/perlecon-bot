@@ -2,8 +2,8 @@ const User = require('../../models/User');
 const embeds = require('../../utils/embeds');
 
 module.exports = {
-  name: 'weeklylb',
-  aliases: ['weeklyrank', 'wr', 'wrank'],
+  name: 'weeklylbfdsf',
+  aliases: ['weeklyrafdsfnk', 'wrfdaf', 'wfdsfarank'],
   description: 'View weekly activity leaderboard',
   async execute(message) {
     try {

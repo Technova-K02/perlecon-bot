@@ -17,6 +17,7 @@ module.exports = {
     const oldLevel = user.level;
     user.xp += amount;
     user.level = this.calculateLevel(user.xp);
+    user.weeklyXP += amount;
     
     await user.save();
     
@@ -27,6 +28,23 @@ module.exports = {
       newLevel: user.level
     };
   },
+  // async addWeeklyXp(userId, amount) {
+  //   const user = await User.findOne({ userId });
+  //   if (!user) return null;
+
+  //   const oldLevel = user.level;
+  //   user.weeklyXP += amount;
+  //   // user.level = this.calculateLevel(user.weeklyXP);
+    
+  //   await user.save();
+    
+    // return {
+    //   user,
+    //   leveledUp: user.level > oldLevel,
+    //   oldLevel,
+    //   newLevel: user.level
+    // };
+  // },
 
   getXpProgress(user) {
     const currentLevelXp = this.calculateXpForLevel(user.level);
