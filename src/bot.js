@@ -68,9 +68,9 @@ const commandList = [
   // Gang Commands
   'army', 'base12321', 'buy', 'makegang', 'gang', 'bangang', 'battlegang', 'descriptiongang', 'disgang',
   'helpgang', 'infogang', 'invitations', 'addgang', 'kickgang', 'ganglb', 'leavegang',
-  'listgang', 'members', 'officergang', 'promote', 'put', 'renamegang', 'searchgang132',
+  'listgang', 'members', 'officergang', 'promote', 'putgang', 'renamegang', 'searchgang132',
   'settingsgang', 'statsgang321312', 'getgang', 'safegang', 'hire', 'hostages', 'info', 'kidnap',
-  'leavebase', 'raid', 'repair', 'return', 'rob', 'tools', 'upgrade', 'upgrades',
+  'leavebase', 'raid', 'repair', 'return', 'rob', 'tools', 'upgrade', 'upgrades', 'takegang',
 
   // Leveling Commands
   'levellb', 'level', 'levelhelp', 'rank', 'lb', 'weeklylbfdsf',
@@ -191,6 +191,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
     const newPremium = newMember?.premiumSince;
 
     console.log(' ' + oldPremium + ' , ' + newPremium + ' ');
+    console.log('hello');
 
     if (newPremium && !oldPremium) {
       const boosterReward = 20000;
@@ -220,8 +221,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         // Log the booster reward
         console.log(`🎉 Automatic booster reward: ${economy.formatMoney(boosterReward)} coins granted to ${newMember.user.username} (${newMember.user.id})`);
 
-        // Send announcement to the announcement channel
-        // const announcementChannelId = announcementchannel; // Using one of the allowed channels as announcement channel
         const announcementChannel = client.channels.cache.get(announcementchannel);
         if (announcementChannel) {
           const announceEmbed = {

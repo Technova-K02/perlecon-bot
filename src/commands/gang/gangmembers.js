@@ -38,7 +38,7 @@ module.exports = {
             membersList += `👤 **${member.username}**\n`;
           } catch (error) {
             membersList += `👤 **Unknown User**\n`;
-          }
+          } 
         }
       }
 
