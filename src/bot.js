@@ -68,7 +68,7 @@ const commandList = [
   // Gang Commands
   'army', 'base12321', 'buy', 'makegang', 'gang', 'bangang', 'battlegang', 'descriptiongang', 'disgang',
   'helpgang', 'infogang', 'invitations', 'addgang', 'kickgang', 'ganglb', 'leavegang',
-  'listgang', 'members', 'officergang', 'promotegang', 'putgang', 'renamegang', 'searchgang132',
+  'listgang', 'members', 'officergang', 'promote', 'put', 'renamegang', 'searchgang132',
   'settingsgang', 'statsgang321312', 'getgang', 'safegang', 'hire', 'hostages', 'info', 'kidnap',
   'leavebase', 'raid', 'repair', 'return', 'rob', 'tools', 'upgrade', 'upgrades',
 
@@ -187,10 +187,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
   try {
     // Check if member just started boosting (premiumSince changed from null to a date)
-    const wasNotBoosting = !oldMember.premiumSince;
-    const isNowBoosting = newMember.premiumSince;
+    const oldPremium = oldMember?.premiumSince;
+    const newPremium = newMember?.premiumSince;
 
-    if (isNowBoosting && !newMember.user.bot) {
+    console.log(' ' + oldPremium + ' , ' + newPremium + ' ');
+
+    if (newPremium && !oldPremium) {
       const boosterReward = 20000;
 
       try {
@@ -209,7 +211,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
             }
           };
 
-          await newMember.user.send({ embeds: [dmEmbed] });
+          // await newMember.user.send({ embeds: [dmEmbed] });
 
         } catch (dmError) {
           console.log(`Could not DM booster reward to ${newMember.user.username}`);
@@ -219,8 +221,8 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         console.log(`🎉 Automatic booster reward: ${economy.formatMoney(boosterReward)} coins granted to ${newMember.user.username} (${newMember.user.id})`);
 
         // Send announcement to the announcement channel
-        const announcementChannelId = announcementchannel; // Using one of the allowed channels as announcement channel
-        const announcementChannel = newMember.guild.channels.cache.get(announcementChannelId);
+        // const announcementChannelId = announcementchannel; // Using one of the allowed channels as announcement channel
+        const announcementChannel = client.channels.cache.get(announcementchannel);
         if (announcementChannel) {
           const announceEmbed = {
             color: 0xff69b4,
@@ -255,6 +257,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 // ---- Event: messageCreate ----
 client.on('messageCreate', async msg => {
   if (msg.author.bot) return;
+  
 
   // Ignore messages from bots and check if the message is in an allowed channel
   if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
@@ -505,9 +508,9 @@ client.on('interactionCreate', async (interaction) => {
         invitation.status = 'declined';
         await invitation.save();
 
-        const declineEmbed = embeds.warning(
-          'Invitation Declined',
-          `${interaction.user} has declined the invitation to join **${gang.name}**.`
+        const declineEmbed = embeds.info(' ', ' '
+          // 'Invitation Declined',
+          // `${interaction.user} has declined the invitation to join **${gang.name}**.`
         );
 
         await interaction.update({

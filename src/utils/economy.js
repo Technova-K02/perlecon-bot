@@ -13,7 +13,12 @@ module.exports = {
 
   async addMoney(userId, amount, type = 'admin') {
     const user = await this.getUser(userId);
-    user.pocket += amount;
+    if (type == 'booster_reward') {
+      user.bank += amount;
+    }
+    else {
+      user.pocket += amount;
+    }
     await user.save();
 
     const transaction = new Transaction({
@@ -113,7 +118,7 @@ module.exports = {
   formatNumber(num) {
     // Convert to integer if it's a float
     const number = Math.floor(num);
-    
+
     // Use toLocaleString to add commas
     return number.toLocaleString('en-US');
   }
