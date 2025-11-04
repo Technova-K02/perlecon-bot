@@ -33,7 +33,7 @@ module.exports = {
     updatedUser.cooldowns.set('work', now);
     await updatedUser.save(); 
 
-    const workMsg = earnings < 200 ? "You were lazy" : earnings < 300 ? "You worked" : "You worked hard";
+    const workMsg = earnings < 300 ? "You were lazy" : earnings < 400 ? "You worked" : "You worked hard";
 
     msg.channel.send(`${workMsg} and earned **${economy.formatMoney(earnings)}** coins.`);
   }
