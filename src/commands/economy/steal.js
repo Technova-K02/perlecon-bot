@@ -118,7 +118,7 @@ module.exports = {
         // Notify the target
         try {
           // await targetUser.send(`**${message.author.username}** tried to steal from you but got caught`).catch(() => {
-            message.channel.send(`${targetUser}, someone tried to steal from you but got caught`);
+            // message.channel.send(`${targetUser}, someone tried to steal from you but got caught`);
           // });
         } catch (error) {
           console.log('Could not send steal notification:', error.message);
@@ -147,7 +147,7 @@ module.exports = {
         // Notify the target
         try {
           // await targetUser.send(`💸 You were robbed Someone stole **${economy.formatMoney(stealAmount)} coins** from your pocket`).catch(() => {
-            message.channel.send(`${targetUser}, you were robbed and lost **${economy.formatMoney(stealAmount)} coins**`);
+            // message.channel.send(`${targetUser}, you were robbed and lost **${economy.formatMoney(stealAmount)} coins**`);
           // });
         } catch (error) {
           console.log('Could not send steal notification:', error.message);

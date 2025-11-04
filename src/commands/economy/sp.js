@@ -2,7 +2,7 @@ const User = require('../../models/User');
 const economy = require('../../utils/economy');
 
 module.exports = {
-    name: 's',
+    name: 'ssfadf',
     description: 'Check your safe balance',
     async execute(msg) {
         const user = await User.findOne({ userId: msg.author.id });

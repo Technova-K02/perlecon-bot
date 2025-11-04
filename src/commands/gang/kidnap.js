@@ -141,7 +141,7 @@ module.exports = {
           // await targetUser.send(`**You have been kidnapped!**\n\nYou were kidnapped by **${message.author.username}** from **${attackerGang.name}**.\n\nYou will be released in **${kidnapHours} hour${kidnapHours !== 1 ? 's' : ''}** at <t:${Math.floor(kidnapUntil.getTime() / 1000)}:F>\n\nWhile kidnapped, you cannot work, steal, or transfer money.`);
         } catch (error) {
           // If DM fails, mention in channel
-          message.channel.send(`${targetUser}, you have been kidnapped and will be released in ${kidnapHours} hour${kidnapHours !== 1 ? 's' : ''}!`);
+          // message.channel.send(`${targetUser}, you have been kidnapped and will be released in ${kidnapHours} hour${kidnapHours !== 1 ? 's' : ''}!`);
         }
 
         return message.channel.send({ embeds: [embed] });
@@ -165,7 +165,7 @@ module.exports = {
           // await targetUser.send(`**Kidnapping Attempt Failed!**\n\n**${message.author.username}** from **${attackerGang.name}** tried to kidnap you but failed!\n\nYou managed to escape. Stay safe!`);
         } catch (error) {
           // If DM fails, mention in channel
-          message.channel.send(`${targetUser}, someone tried to kidnap you but you escaped!`);
+          // message.channel.send(`${targetUser}, someone tried to kidnap you but you escaped!`);
         }
 
         return message.channel.send({ embeds: [embed] });
