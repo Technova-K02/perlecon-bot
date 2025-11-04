@@ -86,20 +86,46 @@ const commandList = [
 ];
 
 // ---- Event: ready ----
-client.once('ready', async () => {
-  console.log(`Logged in as ${client.user.tag}`);
-  console.log(`Serving ${client.guilds.cache.size} servers`);
+// client.once('ready', async () => {
+//   console.log(`Logged in as ${client.user.tag}`);
+//   console.log(`Serving ${client.guilds.cache.size} servers`);
 
-  // Initialize planning system
-  try {
-    await planningSystem.initialize(client);
-    await planningSystem.startBackgroundTasks();
-  } catch (error) {
-    console.error('Failed to initialize planning system:', error);
-  }
+//   // Initialize planning system
+//   try {
+//     await planningSystem.initialize(client);
+//     await planningSystem.startBackgroundTasks();
+//   } catch (error) {
+//     console.error('Failed to initialize planning system:', error);
+//   }
 
-  client.user.setActivity('Perlecon bot | .help', { type: 0 });
-});
+//   client.user.setActivity('Perlecon bot | .help', { type: 0 });
+
+//   // Reward existing boosters on startup
+//   try {
+//     for (const guild of client.guilds.cache.values()) {
+//       await guild.members.fetch(); // Ensure all members are cached
+
+//       const boosters = guild.members.cache.filter(member =>
+//         member.premiumSince !== null && !member.user.bot
+//       );
+
+//       if (boosters.size > 0) {
+//         console.log(`Found ${boosters.size} existing boosters in ${guild.name}`);
+
+//         for (const [userId, member] of boosters) {
+//           try {
+//             await economy.addMoney(userId, 20000, 'existing_booster_reward');
+//             console.log(`Rewarded existing booster: ${member.user.username}`);
+//           } catch (error) {
+//             console.error(`Failed to reward existing booster ${member.user.username}:`, error);
+//           }
+//         }
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error rewarding existing boosters:', error);
+//   }
+// });
 
 // ---- Voice Activity Tracking ----
 client.on('voiceStateUpdate', async (oldState, newState) => {
@@ -164,9 +190,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
     const wasNotBoosting = !oldMember.premiumSince;
     const isNowBoosting = newMember.premiumSince;
 
-    console.log(" " + wasNotBoosting + isNowBoosting + " ");
-
-    if (!newMember.user.bot) {
+    if (isNowBoosting && !newMember.user.bot) {
       const boosterReward = 20000;
 
       try {
@@ -236,7 +260,7 @@ client.on('messageCreate', async msg => {
   if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
   const args1 = msg.content.slice(config.prefix.length).trim().split(/ +/);
   const cmdName1 = args1.shift().toLowerCase();
-  
+
   if (!msg.content.startsWith(config.prefix) || !commandList.includes(cmdName1)) {
     // console.log('deletable');
     try {
