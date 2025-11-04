@@ -67,7 +67,7 @@ module.exports = {
 
       // rewardMessage += `\n**Total Earned:** ${economy.formatMoney(totalReward)} coins`;
 
-      message.channel.send(`**Daily Reward Claimed**\n${rewardMessage}`);
+      message.channel.send(`🎁 **Daily Reward Claimed**\n${rewardMessage}`);
 
     } catch (error) {
       console.error('Daily command error:', error);

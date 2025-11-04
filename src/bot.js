@@ -88,7 +88,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         const timeSpent = Math.floor((Date.now() - user.voiceJoinTime) / 60000); // Convert to minutes
         user.weeklyVoiceMinutes += timeSpent;
         user.voiceJoinTime = null;
-        await user.save(); 
+        await user.save();
 
         // Award total XP for voice activity (1 XP per minute)
         if (timeSpent > 0) {
@@ -127,6 +127,25 @@ client.on('messageCreate', async msg => {
 
   // Ignore messages from bots and check if the message is in an allowed channel
   if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
+
+  // Auto-delete non-command messages
+  if (!msg.content.startsWith(config.prefix)) {
+    try {
+      if (msg.deletable) {
+        setTimeout(async () => {
+          try {
+            await msg.delete();
+          } catch (error) {
+            console.error('Auto-delete error:', error);
+          }
+        }, 500); // 0.5 second delay to avoid rate limits
+      }
+    } catch (error) {
+      console.error('Message deletion check error:', error);
+    }
+    return; // Don't process non-command messages further
+  }
+
 
   // Track message count and award XP for all users (not just commands)
   try {
@@ -341,7 +360,7 @@ client.on('interactionCreate', async (interaction) => {
           // `Members: ${gang.members.length}/${gang.maxMembers}\n` +
           // `Power: ${gang.power}\n` +
           // `safe: ${economy.formatMoney(gang.safe)}`
-        ); 
+        );
 
         await interaction.update({
           embeds: [successEmbed],

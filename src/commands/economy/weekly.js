@@ -59,7 +59,7 @@ module.exports = {
         rewardMessage += `\n**Weekly Streak Bonus:** +${economy.formatMoney(streakBonus)} coins (${weeklyStreak} week streak)`;
       }
 
-      message.channel.send(`**Weekly Reward Claimed**\n${rewardMessage}`);
+      message.channel.send(`🎁 **Weekly Reward Claimed**\n${rewardMessage}`);
 
     } catch (error) {
       console.error('Weekly command error:', error);

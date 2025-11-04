@@ -4,56 +4,81 @@ const Gang = require('../../models/Gang');
 const embeds = require('../../utils/embeds');
 
 module.exports = {
-  name: 'resetgangs',
-  description: 'Disband all gangs in the server (Admin/Owner only)',
+  name: 'disbandgang',
+  description: 'Disband a specific gang by name (Admin/Owner only)',
   async execute(message, args) {
     // Check if user is bot owner or has admin permissions
     const isOwner = message.author.id === process.env.OWNER_ID;
     const isAdmin = message.member && message.member.permissions.has('ADMINISTRATOR');
-
+    
     if (!isOwner && !isAdmin) {
       const errorEmbed = embeds.error('Permission Denied', 'Only administrators or the bot owner can use this command.');
       return message.channel.send({ embeds: [errorEmbed] });
     }
 
-    try {
-      // Get all gangs
-      const allGangs = await Gang.find({});
+    // Check if gang name was provided
+    if (!args.length) {
+      const helpEmbed = embeds.info(
+        'Disband Gang Command',
+        '**Usage:** `.disbandgang <gang name>`\n\n' +
+        '**Example:** `.disbandgang BadGangName`\n\n' +
+        'This will disband the specified gang and remove all members from it.'
+      );
+      return message.channel.send({ embeds: [helpEmbed] });
+    }
 
-      if (allGangs.length === 0) {
-        const infoEmbed = embeds.info('No Gangs Found', 'There are no gangs to disband.');
-        return message.channel.send({ embeds: [infoEmbed] });
+    const gangName = args.join(' ');
+
+    try {
+      // Find the gang by name (case-insensitive)
+      const gang = await Gang.findOne({ 
+        name: { $regex: new RegExp(`^${gangName}$`, 'i') }
+      });
+
+      if (!gang) {
+        const errorEmbed = embeds.error(
+          'Gang Not Found',
+          `No gang found with the name "${gangName}".\n\n` +
+          'Make sure you spelled the gang name correctly.'
+        );
+        return message.channel.send({ embeds: [errorEmbed] });
       }
 
-      // Count total members across all gangs
-      let totalMembers = 0;
-      allGangs.forEach(gang => {
-        totalMembers += gang.members.length;
-      });
+      // Get gang leader info
+      let leaderName = 'Unknown User';
+      try {
+        const leader = await message.client.users.fetch(gang.leaderId);
+        leaderName = leader.username;
+      } catch (error) {
+        // Keep default name
+      }
 
       // Create confirmation embed
       const confirmEmbed = embeds.warning(
-        'Confirm Gang Reset',
-        `⚠️ **Are you sure you want to reset all gangs?**\n\n` +
-        `**Gangs to be disbanded:** ${allGangs.length}\n` +
-        `**Total members affected:** ${totalMembers}\n\n` +
+        'Confirm Gang Disbandment',
+        `⚠️ **Are you sure you want to disband this gang?**\n\n` +
+        `**Gang Name:** ${gang.name}\n` +
+        `**Leader:** ${leaderName}\n` +
+        `**Members:** ${gang.members.length}\n` +
+        `**Power:** ${gang.power}\n` +
+        `**Vault:** ${gang.safe} coins\n\n` +
         `**This action will:**\n` +
-        `• Permanently delete all gang data\n` +
-        `• Remove all gang progress and upgrades\n` +
-        `• Clear all gang vaults\n` +
+        `• Permanently delete the gang\n` +
+        `• Remove all members from the gang\n` +
+        `• Delete all gang progress and upgrades\n` +
         `• Cannot be undone\n\n` +
         `Click **Yes** to confirm or **No** to cancel.`
       );
 
       // Create buttons
       const confirmButton = new ButtonBuilder()
-        .setCustomId('resetgangs_yes')
+        .setCustomId('disgang_yes')
         .setLabel('Yes')
         .setStyle(ButtonStyle.Danger)
         .setEmoji('✅');
 
       const cancelButton = new ButtonBuilder()
-        .setCustomId('resetgangs_no')
+        .setCustomId('disgang_no')
         .setLabel('No')
         .setStyle(ButtonStyle.Secondary)
         .setEmoji('❌');
@@ -81,24 +106,25 @@ module.exports = {
           return;
         }
 
-        if (interaction.customId === 'resetgangs_yes') {
+        if (interaction.customId === 'disgang_yes') {
           await interaction.deferUpdate();
 
           try {
-            // Remove gang reference from all users
+            // Remove gang reference from all members
             await User.updateMany(
-              { gang: { $exists: true } },
+              { gang: gang._id },
               { $unset: { gang: 1 } }
             );
 
-            // Delete all gangs
-            const deleteResult = await Gang.deleteMany({});
+            // Delete the gang
+            await Gang.findByIdAndDelete(gang._id);
 
             const successEmbed = embeds.success(
-              'All Gangs Reset',
-              `Successfully disbanded **${deleteResult.deletedCount}** gangs.\n` +
-              `**Total Members Affected:** ${totalMembers}\n\n` +
-              `All gang data has been permanently deleted.`
+              'Gang Disbanded',
+              `Successfully disbanded the gang **${gang.name}**.\n\n` +
+              `**Members affected:** ${gang.members.length}\n` +
+              `**Action performed by:** ${message.author.username}\n\n` +
+              `The gang and all its data have been permanently deleted.`
             );
 
             await confirmMessage.edit({
@@ -107,24 +133,24 @@ module.exports = {
             });
 
             // Log the action
-            console.log(`Gang reset performed by ${message.author.username} (${message.author.id})`);
-            console.log(`Disbanded ${deleteResult.deletedCount} gangs affecting ${totalMembers} members`);
+            console.log(`Gang "${gang.name}" disbanded by ${message.author.username} (${message.author.id})`);
+            console.log(`Gang had ${gang.members.length} members and ${gang.safe} coins in vault`);
 
           } catch (error) {
-            console.error('Reset gangs error:', error);
-            const errorEmbed = embeds.error('Command Error', 'An error occurred while resetting gangs. Please try again.');
+            console.error('Disband gang error:', error);
+            const errorEmbed = embeds.error('Command Error', 'An error occurred while disbanding the gang. Please try again.');
             await confirmMessage.edit({
               embeds: [errorEmbed],
               components: []
             });
           }
 
-        } else if (interaction.customId === 'resetgangs_no') {
+        } else if (interaction.customId === 'disgang_no') {
           await interaction.deferUpdate();
 
           const cancelEmbed = embeds.info(
-            'Gang Reset Cancelled',
-            'The gang reset operation has been cancelled. No gangs were affected.'
+            'Gang Disbandment Cancelled',
+            `The disbandment of gang **${gang.name}** has been cancelled.`
           );
 
           await confirmMessage.edit({
@@ -141,7 +167,7 @@ module.exports = {
           // Timeout - disable buttons
           const timeoutEmbed = embeds.error(
             'Command Timeout',
-            'The gang reset confirmation timed out. No gangs were affected.'
+            `The gang disbandment confirmation timed out. Gang **${gang.name}** was not affected.`
           );
 
           await confirmMessage.edit({
@@ -152,8 +178,8 @@ module.exports = {
       });
 
     } catch (error) {
-      console.error('Reset gangs error:', error);
-      const errorEmbed = embeds.error('Command Error', 'An error occurred while preparing the gang reset. Please try again.');
+      console.error('Disband gang error:', error);
+      const errorEmbed = embeds.error('Command Error', 'An error occurred while preparing the gang disbandment. Please try again.');
       message.channel.send({ embeds: [errorEmbed] });
     }
   }
