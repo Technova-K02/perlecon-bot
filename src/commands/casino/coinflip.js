@@ -1,6 +1,7 @@
 const economy = require('../../utils/economy');
 const embeds = require('../../utils/embeds');
 const Transaction = require('../../models/Transaction');
+const CasinoLog = require('../../models/CasinoLog');
 
 module.exports = {
   name: 'coinflip',
@@ -46,9 +47,18 @@ module.exports = {
     });
     await transaction.save();
 
+    const casinoLog = new CasinoLog({
+      userId: msg.author.id,
+      game: 'coinflip',
+      betAmount: bet,
+      result,
+      payout: result === 'win' ? payout : 0
+    });
+    await casinoLog.save();
+
     const resultEmbed = win
       ? embeds.success(
-        '**Coinflip**', `You Won **${economy.formatMoney(bet*2)}**.`
+        '**Coinflip**', `You Won **${economy.formatMoney(bet * 2)}**.`
         // `The coin landed on **${result}**\nYou won **${} coins**\n\n**New Balance:** ${economy.formatMoney(updatedUser.pocket)} coins`
       )
       : embeds.error(

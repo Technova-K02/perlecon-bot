@@ -163,7 +163,9 @@ module.exports = {
       // Perform the upgrade
       user.pocket -= upgradeCost;
       gang.upgrades[actualUpgradeType] = currentLevel + 1;
+      
       await gang.save();
+      await user.save(); // FIXED: Save user to persist pocket changes
 
       let upgradeMessage = `You paid ${upgradeCost} and ${upgradeInfo.name} upgraded to level **${currentLevel + 1}**!`;
         // `**Cost:** ${economy.formatMoney(upgradeCost)} coins\n` +
@@ -234,11 +236,12 @@ async function handleBaseUpgrade(message, gang, user) {
 
   const oldStats = getBaseStats(gang.base.level);
   gang.base.level += 1;
-  gang.vault -= upgradeCost;
+  user.pocket -= upgradeCost; // FIXED: Deduct from user pocket, not gang vault
   gang.base.guards = nextLevelStats.maxGuards;
   gang.base.hp = nextLevelStats.maxHP; // Restore to full HP on upgrade
 
   await gang.save();
+  await user.save(); // FIXED: Save user to persist pocket changes
 
   const { getBaseName } = require('../../utils/gangUpgrades');
   const embed = embeds.success(
