@@ -3,7 +3,7 @@
 // Wall/Fence names by level
 const WALL_NAMES = {
   1: 'Rusty Fence',
-  2: 'Chain Fence', 
+  2: 'Chain Fence',
   3: 'Barbed Fence',
   4: 'Reinforced Fence',
   5: 'Plated Wall',
@@ -18,7 +18,7 @@ const WALL_NAMES = {
 const BASE_NAMES = {
   1: 'Trailer',
   2: 'Cabin',
-  3: 'Warehouse', 
+  3: 'Warehouse',
   4: 'Bunker',
   5: 'Compound',
   6: 'Fortress',
@@ -60,6 +60,15 @@ const UPGRADES = {
     costMultiplier: 1.5,
     effectPerLevel: 'Medics heal 15% more each level',
     description: 'Train your medics to repair base damage more effectively'
+  },
+  bases: {
+    name: 'Base',
+    maxLevel: 8,
+    baseCost: 10000,
+    costMultiplier: 1.75,
+    effectPerLevel: 'Increases max HP, safe capacity, and army size',
+    description: 'Upgrade your base to increase its maximum health, safe capacity for storing coins, and the number of guards and medics you can hire',
+    getLevelName: (level) => BASE_NAMES[level] || `Level ${level} Base`
   }
 };
 
@@ -72,9 +81,9 @@ const UPGRADES = {
 function getUpgradeCost(upgradeType, currentLevel) {
   const upgrade = UPGRADES[upgradeType];
   if (!upgrade) return 0;
-  
+
   if (currentLevel >= upgrade.maxLevel) return 0; // Already at max level
-  
+
   return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel - 1));
 }
 
