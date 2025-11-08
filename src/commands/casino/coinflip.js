@@ -47,12 +47,13 @@ module.exports = {
     });
     await transaction.save();
 
+    // Log casino activity
     const casinoLog = new CasinoLog({
       userId: msg.author.id,
       game: 'coinflip',
       betAmount: bet,
-      result,
-      payout: result === 'win' ? payout : 0
+      result: win ? 'win' : 'lose',
+      payout: win ? bet*2 : 0
     });
     await casinoLog.save();
 

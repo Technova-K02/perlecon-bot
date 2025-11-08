@@ -56,7 +56,7 @@ module.exports = {
 
       const embed = embeds.success(
         'Left Base',
-        `You have left the base with **${gang.base.guards}** guards.\n`
+        `You have left the base with **${user.guardsWithUser}** guards.\n`
       );
 
       return message.channel.send({ embeds: [embed] });

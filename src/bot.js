@@ -80,7 +80,7 @@ const commandList = [
 
   // Shop Commands
   'inventory', 'inv', 'shop', 'shophelp', 'wardrobe',
-
+ 
   // Utility Commands
   'help'
 ];
@@ -395,9 +395,9 @@ client.on('interactionCreate', async (interaction) => {
           // Keep default name
         }
 
-        const successEmbed = embeds.success(' ', ' '
-          // 'Welcome to the Gang',
-          // `${interaction.user} has successfully joined **${gang.name}**.\n\n` +
+        const successEmbed = embeds.success(
+          'Welcome to the Gang',
+          `${interaction.user} has successfully joined **${gang.name}**.\n`
           // `**Gang Info:**\n` +
           // `Leader: ${leaderName}\n` +
           // `Members: ${gang.members.length}/${gang.maxMembers}\n` +
@@ -405,7 +405,9 @@ client.on('interactionCreate', async (interaction) => {
           // `safe: ${economy.formatMoney(gang.safe)}`
         );
 
-        await interaction.update({
+        // msg.channel.send({embeds: [successEmbed]});
+
+        interaction.update({
           embeds: [successEmbed],
           components: []
         });
@@ -415,12 +417,14 @@ client.on('interactionCreate', async (interaction) => {
         invitation.status = 'declined';
         await invitation.save();
 
-        const declineEmbed = embeds.warning(' ', ' '
-          // 'Invitation Declined',
-          // `${interaction.user} has declined the invitation to join **${gang.name}**.`
+        const declineEmbed = embeds.warning(
+          'Invitation Declined',
+          `${interaction.user} has declined the invitation to join **${gang.name}**.`
         );
 
-        await interaction.update({
+        // message.channel.send({embeds: [declineEmbed]});
+
+        interaction.update({
           embeds: [declineEmbed],
           components: []
         });

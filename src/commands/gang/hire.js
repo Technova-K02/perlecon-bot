@@ -14,7 +14,7 @@ const PERSONNEL = {
     description: 'Guards protect your base from robberies and provide base defense'
   },
   medic: {
-    name: 'Medic', 
+    name: 'Medic',
     cost: 7000,
     effect: 'Repairs base damage when .repair is used',
     description: 'Medics can repair base damage and heal your base HP'
@@ -43,9 +43,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot hire personnel');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'hire personnel');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Get user data
@@ -96,10 +97,10 @@ module.exports = {
       await gang.save();
 
       // Check if user is leader or officer
-      if (gang.leaderId !== message.author.id && !gang.officers.includes(message.author.id)) {
-        const errorEmbed = embeds.error('Permission Denied', 'Only gang leaders and officers can hire personnel');
-        return message.channel.send({ embeds: [errorEmbed] });
-      }
+      // if (gang.leaderId !== message.author.id && !gang.officers.includes(message.author.id)) {
+      //   const errorEmbed = embeds.error('Permission Denied', 'Only gang leaders and officers can hire personnel');
+      //   return message.channel.send({ embeds: [errorEmbed] });
+      // }
 
       const personnelType = args[0]?.toLowerCase();
 
@@ -107,7 +108,7 @@ module.exports = {
         const baseStats = getBaseStats(gang.base.level);
         const currentGuards = gang.army?.guards || 0;
         const currentMedics = gang.army?.medics || 0;
-        
+
         const embed = embeds.info(
           'Gang Personnel Hiring',
           `**Current Army:**\n` +
@@ -136,7 +137,7 @@ module.exports = {
 
       const personnel = PERSONNEL[personnelType];
       const baseStats = getBaseStats(gang.base.level);
-      
+
       // Initialize army if not exists
       if (!gang.army) {
         gang.army = { guards: 0, medics: 0 };
@@ -164,7 +165,7 @@ module.exports = {
       // Hire the personnel
       user.pocket -= personnel.cost;
       gang.army[personnelType + 's'] += 1;
-      
+
       // Add level 1 to the appropriate level array
       if (personnelType === 'guard') {
         gang.army.guardLevels.push(1);

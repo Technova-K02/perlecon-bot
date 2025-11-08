@@ -31,9 +31,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot transfer money to other users');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'transfer money to other users');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Get amount from arguments (now first argument)

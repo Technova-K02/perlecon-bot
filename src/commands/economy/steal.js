@@ -10,9 +10,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot steal from other users');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'steal from other users');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Check if user mentioned someone

@@ -10,9 +10,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot kidnap others');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'kidnap others');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Get user data
@@ -30,7 +31,7 @@ module.exports = {
       }
 
       // Check kidnap cooldown (5 minutes)
-      const kidnapCooldown = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const kidnapCooldown = 60 * 60 * 1000; // 60 minutes in milliseconds
       const lastKidnap = user.cooldowns?.get('kidnap') || 0;
       if (Date.now() - lastKidnap < kidnapCooldown) {
         const remaining = Math.ceil((lastKidnap + kidnapCooldown - Date.now()) / (60 * 1000));
@@ -85,13 +86,13 @@ module.exports = {
       // Calculate success rate using utility function
       const guardPenalty = targetUserData.guardsWithUser * 15; // Each guard reduces success by 15%
       const nonGangBonus = !targetUserData.gang ? 20 : 0; // +20% for non-gang members
-      
-      const successRate = calculateSuccessRate(70, {
+
+      const successRate = calculateSuccessRate(50, { // FIXED: Reduced from 70% to 40% base
         nonGangBonus: nonGangBonus
       }) - guardPenalty; // Apply guard penalty separately to allow going below 5%
-      
+
       // For kidnapping, allow lower success rates but cap at 95%
-      const finalSuccessRate = Math.max(5, Math.min(95, successRate));
+      const finalSuccessRate = Math.max(5, Math.min(50, successRate));
 
       // Roll for success
       const roll = Math.random() * 100;
@@ -110,19 +111,18 @@ module.exports = {
         targetUserData.status = 'kidnapped';
         targetUserData.kidnappedUntil = kidnapUntil;
         targetUserData.kidnappedBy = message.author.id;
-        
+
         // If target had guards, they're lost during kidnapping
         if (targetUserData.guardsWithUser > 0) {
           targetUserData.guardsWithUser = 0;
         }
-        
+
         await targetUserData.save();
 
         // Update gang stats
         attackerGang.kidnaps += 1;
         attackerGang.hostages += 1;
-        attackerGang.power += 5;
-        
+
         await attackerGang.save();
 
         const embed = embeds.success(
@@ -131,8 +131,7 @@ module.exports = {
           `**Duration:** ${kidnapHours} hour${kidnapHours !== 1 ? 's' : ''}\n` +
           `**Released at:** <t:${Math.floor(kidnapUntil.getTime() / 1000)}:F>\n` +
           `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n\n` +
-          `**Gang Hostages:** ${attackerGang.hostages}\n` +
-          `**Power Gained:** +5 (Total: ${attackerGang.power})\n\n` +
+          `**Gang Hostages:** ${attackerGang.hostages}\n\n` +
           `*${targetUser.username} cannot work, steal, or transfer money while kidnapped*`
         );
 
@@ -147,16 +146,14 @@ module.exports = {
         return message.channel.send({ embeds: [embed] });
 
       } else {
-        // Kidnap failed
-        if (attackerGang.power > 2) attackerGang.power -= 2;
+        // Kidnap failed - no power system changes
         await attackerGang.save();
 
         const embed = embeds.error(
           'Kidnapping Failed!',
           `**${message.author.username}** failed to kidnap **${targetUser.username}**!\n\n` +
-          `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n` +
-          `**Roll:** ${roll.toFixed(1)}%\n\n` +
-          `**Power Lost:** -2 (Total: ${attackerGang.power})\n\n` +
+          `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n\n` +
+          // `**Roll:** ${roll.toFixed(1)}%\n\n` +
           `*${targetUser.username} escaped and is now aware of the attempt*`
         );
 

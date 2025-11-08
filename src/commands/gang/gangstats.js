@@ -47,7 +47,7 @@ module.exports = {
         { name: '👑 Leader', value: leaderName, inline: true },
         { name: '👥 Members', value: `${gang.members.length}`, inline: true },
         { name: '🏆 Rank', value: `#${gangRank}`, inline: true },
-        { name: '💪 Power', value: `${gang.power}`, inline: true },
+
         { name: '💰 Vault', value: `${economy.formatMoney(gang.vault)}`, inline: true },
         { name: '📈 Win Rate', value: `${winRate}%`, inline: true },
         { name: '⚔️ Battles Won', value: `${gang.wins}`, inline: true },

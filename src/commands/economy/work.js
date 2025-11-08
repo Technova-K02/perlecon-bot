@@ -8,9 +8,10 @@ module.exports = {
   description: 'Earn some coins',
   async execute(msg) {
     // Check if user is kidnapped
-    if (await isUserKidnapped(msg.author.id)) {
-      const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot work');
-      return msg.channel.send({ embeds: [errorEmbed] });
+    const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+    const kidnapError = await getKidnapErrorEmbed(msg.author.id, 'work');
+    if (kidnapError) {
+      return msg.channel.send({ embeds: [kidnapError] });
     }
 
     const userId = msg.author.id;

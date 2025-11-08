@@ -1,14 +1,14 @@
 const SHOP_ITEMS = {
   // Cats
   'cute-cat': { price: 5000, category: 'Cats', description: 'A cute cat emoji', displayName: 'Cute Cat', emoji: 'cutecat', emoji_id: '1434997558928736448' },
-  'orange-cat': { price: 6000, category: 'Cats', description: 'An orange cat emoji', displayName: 'Orange Cat', emoji: 'orangecat', emoji_id: '1434997578335785052' },
-  'l-cat': { price: 7000, category: 'Cats', description: 'L cat emoji', displayName: 'L Cat', emoji: 'lcat', emoji_id: '1434997573738823711' },
-  'w-cat': { price: 8000, category: 'Cats', description: 'W cat emoji', displayName: 'W Cat', emoji: 'wcat', emoji_id: '1434997590042214622' },
-  'trippin-cat': { price: 9000, category: 'Cats', description: 'Trippin cat emoji', displayName: 'Trippin Cat', emoji: 'trippincat', emoji_id: '1434997581091438664' },
-  'zoom-cat': { price: 10000, category: 'Cats', description: 'Zoom cat emoji', displayName: 'Zoom Cat', emoji: 'zoomcat', emoji_id: '1434997593913430166' },
-  'void-cat': { price: 11000, category: 'Cats', description: 'Cat void emoji', displayName: 'Void Cat', emoji: 'voidgradient', emoji_id: '1434997590042214622' },
-  'galaxy-cat': { price: 12000, category: 'Cats', description: 'Galaxy cat emoji', displayName: 'Galaxy Cat', emoji: 'galaxycat', emoji_id: '1434997562867318916' },
-  'gold-cat': { price: 13000, category: 'Cats', description: 'Cat gold emoji', displayName: 'Gold Cat', emoji: 'goldgradient', emoji_id: '1434997569058242710' },
+  'orange-cat': { price: 13000, category: 'Cats', description: 'An orange cat emoji', displayName: 'Orenji Cat', emoji: 'orangecat', emoji_id: '1434997578335785052' },
+  'l-cat': { price: 21000, category: 'Cats', description: 'L cat emoji', displayName: 'L Cat', emoji: 'lcat', emoji_id: '1434997573738823711' },
+  'w-cat': { price: 29000, category: 'Cats', description: 'W cat emoji', displayName: 'W Cat', emoji: 'wcat', emoji_id: '1434997590042214622' },
+  'trippin-cat': { price: 37000, category: 'Cats', description: 'Trippin cat emoji', displayName: 'Trippin Cat', emoji: 'trippincat', emoji_id: '1434997581091438664' },
+  'zoom-cat': { price: 45000, category: 'Cats', description: 'Zoom cat emoji', displayName: 'Zoom Cat', emoji: 'zoomcat', emoji_id: '1434997593913430166' },
+  'void-cat': { price: 53000, category: 'Cats', description: 'Cat void emoji', displayName: 'Void Cat', emoji: 'voidgradient', emoji_id: '1434997585222963262' },
+  'galaxy-cat': { price: 61000, category: 'Cats', description: 'Galaxy cat emoji', displayName: 'Galaxy Cat', emoji: 'galaxycat', emoji_id: '1434997562867318916' },
+  'gold-cat': { price: 69000, category: 'Cats', description: 'Cat gold emoji', displayName: 'Gold Cat', emoji: 'goldgradient', emoji_id: '1434997569058242710' },
 
   // Name Styles
   'cyan-style': {

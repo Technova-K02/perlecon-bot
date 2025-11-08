@@ -101,7 +101,7 @@ module.exports = {
         `**Gang Info:**\n` +
         `Leader: ${message.author.username}\n` +
         `Members: ${gang.members.length}/${gang.maxMembers}\n` +
-        `Power: ${gang.power}\n` +
+
         `Description: ${gang.description}\n\n` +
         `*This invitation expires in 24 hours.*`
       );

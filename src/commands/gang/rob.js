@@ -6,6 +6,22 @@ const { isUserKidnapped } = require('../../utils/kidnapping');
 const { calculateSuccessRate } = require('../../utils/combatUtils');
 const { getGuardTrainingBonus } = require('../../utils/gangUpgrades');
 
+// Base progression table
+function getBaseStats(level) {
+  const baseData = {
+    1: { name: 'Trailer', maxHP: 250, safeCapacity: 10000, maxGuards: 4, maxMedics: 2, upgradeCost: 0 },
+    2: { name: 'Cabin', maxHP: 500, safeCapacity: 20000, maxGuards: 6, maxMedics: 3, upgradeCost: 10000 },
+    3: { name: 'Warehouse', maxHP: 900, safeCapacity: 35000, maxGuards: 8, maxMedics: 4, upgradeCost: 20000 },
+    4: { name: 'Bunker', maxHP: 1400, safeCapacity: 55000, maxGuards: 10, maxMedics: 5, upgradeCost: 35000 },
+    5: { name: 'Compound', maxHP: 2000, safeCapacity: 80000, maxGuards: 12, maxMedics: 6, upgradeCost: 55000 },
+    6: { name: 'Fortress', maxHP: 2800, safeCapacity: 110000, maxGuards: 14, maxMedics: 7, upgradeCost: 80000 },
+    7: { name: 'Citadel', maxHP: 3800, safeCapacity: 150000, maxGuards: 16, maxMedics: 8, upgradeCost: 110000 },
+    8: { name: 'Kingdom', maxHP: 5000, safeCapacity: 200000, maxGuards: 18, maxMedics: 9, upgradeCost: 150000 }
+  };
+
+  return baseData[level] || baseData[1];
+}
+
 module.exports = {
   name: 'rob',
   aliases: ['robgang'],
@@ -13,9 +29,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot rob other gangs');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'rob other gangs');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Get user data
@@ -150,9 +167,17 @@ module.exports = {
           ? actualMinSteal 
           : Math.floor(Math.random() * (actualMaxSteal - actualMinSteal + 1)) + actualMinSteal;
         
+        // Get attacker gang vault limit
+        const attackerBaseLevel = attackerGang.base?.level || 1;
+        const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
+        
+        // Ensure attacker's vault doesn't exceed limit
+        const maxCanReceive = attackerVaultLimit - attackerGang.vault;
+        const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
+        
         // Transfer coins
-        targetGang.vault -= coinsStolen;
-        attackerGang.vault += coinsStolen;
+        targetGang.vault = Math.max(0, targetGang.vault - actualCoinsStolen);
+        attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
         
         // Update gang stats
         attackerGang.robs += 1;
@@ -164,7 +189,7 @@ module.exports = {
         await attackerGang.save();
 
         let resultMessage = `**${attackerGang.name}** successfully robbed **${targetGang.name}**!\n\n` +
-          `**Coins Stolen:** ${economy.formatMoney(coinsStolen)}\n` +
+          `**Coins Stolen:** ${economy.formatMoney(actualCoinsStolen)}\n` +
           `**Steal Range:** ${economy.formatMoney(minSteal)} - ${economy.formatMoney(maxSteal)}\n` +
           `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n`;
         

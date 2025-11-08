@@ -25,21 +25,33 @@ module.exports = {
         'guardstraining': 'guardsTraining',
         'medics': 'medicTraining',
         'medic': 'medicTraining',
-        'medictraining': 'medicTraining'
+        'medictraining': 'medicTraining',
+        'bases': 'bases',
+        'base': 'bases'
       };
 
       const upgradeType = upgradeMap[args[0].toLowerCase()];
       if (upgradeType && upgrades[upgradeType]) {
         const upgrade = upgrades[upgradeType];
+        const { getUpgradeCost } = require('../../utils/gangUpgrades');
+
+        // Generate level-based pricing display
+        let levelPricing = '';
+        for (let level = 1; level <= Math.min(upgrade.maxLevel, 9); level++) {
+          const cost = getUpgradeCost(upgradeType, level);
+          levelPricing += `lvl ${level} - ${economy.formatMoney(cost)} coins\n`;
+          if (level < Math.min(upgrade.maxLevel, 10)) {
+            levelPricing += ' ';
+          }
+        }
+
         const embed = embeds.info(
           `🔧 ${upgrade.name} Upgrade`,
-          upgrade.description
+          `${upgrade.description}\n\n**Pricing:\n** ${levelPricing}`
         ).addFields(
-          { name: 'Base Cost', value: `${economy.formatMoney(upgrade.baseCost)} coins`, inline: true },
-          { name: 'Cost Growth', value: `×${upgrade.costMultiplier} per level`, inline: true },
           { name: 'Max Level', value: `${upgrade.maxLevel}`, inline: true },
           { name: 'Effect per Level', value: upgrade.effectPerLevel, inline: false },
-          { name: 'Purchase', value: `Use \`.upgrade ${args[0].toLowerCase()}\` to upgrade\n*Leaders only*`, inline: false }
+          { name: 'Purchase', value: `Use \`.upgrade ${args[0].toLowerCase()}\` to upgrade\n`, inline: false }
         );
 
         return message.channel.send({ embeds: [embed] });

@@ -36,7 +36,7 @@ module.exports = {
         const winRate = (gang.wins + gang.losses) > 0 ? Math.round((gang.wins / (gang.wins + gang.losses)) * 100) : 0;
         
         results += `**${gang.name}**\n`;
-        results += `👑 ${leaderName} | 💪 ${gang.power} | 👥 ${gang.members.length} | 📈 ${winRate}%\n\n`;
+        results += `👑 ${leaderName} | 👥 ${gang.members.length} | 📈 ${winRate}%\n\n`;
       }
 
       const embed = embeds.info(`🔍 Search Results for "${searchTerm}"`, results);

@@ -61,7 +61,7 @@ module.exports = {
           hostagesList += `**${index + 1}.** ${hostage.victim}\n`;
           hostagesList += `└ Kidnapped by: ${hostage.kidnapper}\n`;
           hostagesList += `└ Time remaining: ${timeLeft}\n`;
-          hostagesList += `└ Released at: <t:${Math.floor(hostage.releaseTime.getTime() / 1000)}:R>\n\n`;
+          // hostagesList += `└ Released at: <t:${Math.floor(hostage.releaseTime.getTime() / 1000)}:R>\n\n`;
         });
       }
 
@@ -72,8 +72,8 @@ module.exports = {
 
       if (gangHostages.length > 0) {
         embed.addFields(
-          { name: 'Gang Stats', value: `**Total Kidnaps:** ${gang.kidnaps}\n**Gang Power:** ${gang.power}`, inline: true },
-          { name: 'Kidnapping', value: 'Use `.kidnap <@user>` to kidnap more people\n*Targets must be outside their base*', inline: true }
+          { name: 'Gang Stats', value: `**Total Kidnaps:** ${gang.kidnaps}`, inline: true }
+          // { name: 'Kidnapping', value: 'Use `.kidnap <@user>` to kidnap more people\n*Targets must be outside their base*', inline: true }
         );
       }
 

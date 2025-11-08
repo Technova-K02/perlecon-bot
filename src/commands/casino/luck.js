@@ -54,13 +54,6 @@ module.exports = {
       return msg.channel.send({ embeds: [errorEmbed] });
     }
 
-    if (bet < 10) {
-      const errorEmbed = embeds.error(
-        'Minimum Bet',
-        'Minimum bet amount is 10 coins.'
-      );
-      return msg.channel.send({ embeds: [errorEmbed] });
-    }
 
     // Check user balance
     const user = await economy.getUser(msg.author.id);

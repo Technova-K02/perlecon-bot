@@ -29,9 +29,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot raid other gangs');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'raid other gangs');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       // Get user data
@@ -136,8 +137,16 @@ module.exports = {
         const coinsStolen = Math.floor(targetGang.vault * stealPercentage);
 
         if (coinsStolen > 0) {
-          targetGang.vault -= coinsStolen;
-          attackerGang.vault += coinsStolen;
+          // Get attacker gang vault limit
+          const attackerBaseLevel = attackerGang.base?.level || 1;
+          const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
+          
+          // Ensure attacker's vault doesn't exceed limit
+          const maxCanReceive = attackerVaultLimit - attackerGang.vault;
+          const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
+          
+          targetGang.vault = Math.max(0, targetGang.vault - actualCoinsStolen);
+          attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
         }
 
         // Update gang stats
@@ -178,8 +187,8 @@ module.exports = {
         const embed = embeds.error(
           'Raid Failed!',
           `**${attackerGang.name}** failed to raid **${targetGang.name}**!\n\n` +
-          `**Success Rate:** ${successRate.toFixed(1)}%\n` +
-          `**Roll:** ${roll.toFixed(1)}%\n\n`
+          `**Success Rate:** ${successRate.toFixed(1)}%\n` 
+          // `**Roll:** ${roll.toFixed(1)}%\n\n`
           // `**Power Lost:** -3 (Total: ${attackerGang.power})\n` +
           // `**Target Power Gained:** +5`
         );

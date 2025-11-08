@@ -34,6 +34,10 @@ module.exports = {
 
   async handleButton(interaction) {
     const [action, category, userId] = interaction.customId.split('_');
+    
+    // Debug logging to help troubleshoot button issues
+    console.log(`🔍 Shop button pressed: ${interaction.customId}`);
+    console.log(`📊 Parsed: action="${action}", category="${category}", userId="${userId}"`);
 
     if (interaction.user.id !== userId) {
       return interaction.reply({ content: 'This shop interface is not for you', flags: 64 });
@@ -84,7 +88,7 @@ module.exports = {
       let totalButtons = 0;
 
       for (const [itemId, item] of categoryItems) {
-        if (totalButtons >= 20) break; // Leave space for back button
+        if (totalButtons >= 25) break; // Max 25 buttons (5 rows of 5)
 
         if (buttonCount === 5) {
           buttons.push(currentRow);
@@ -112,26 +116,7 @@ module.exports = {
         buttons.push(currentRow);
       }
 
-      // Add back button in its own row or add to last row if there's space
-      if (buttonCount < 5 && buttons.length > 0) {
-        // Add to last row if there's space
-        buttons[buttons.length - 1].addComponents(
-          new ButtonBuilder()
-            .setCustomId(`shop_back_${userId}`)
-            .setLabel('← Back')
-            .setStyle(ButtonStyle.Secondary)
-        );
-      } else {
-        // Create new row for back button
-        const backButton = new ActionRowBuilder()
-          .addComponents(
-            new ButtonBuilder()
-              .setCustomId(`shop_back_${userId}`)
-              .setLabel('← Back to Categories')
-              .setStyle(ButtonStyle.Secondary)
-          );
-        buttons.push(backButton);
-      }
+      // No back button - users can use .shop command to return to categories
       interaction.update({ embeds: [categoryEmbed], components: buttons });
     } else if (action === 'buy') {
       const itemId = category; // In buy buttons, category is actually the itemId
@@ -249,30 +234,6 @@ module.exports = {
       const successEmbed = embeds.success('Purchase Successful', successMessage);
 
       interaction.reply({ embeds: [successEmbed], flags: 64 });
-    } else if (action === 'shop' && category === 'back') {
-      // Go back to main shop
-      const shopEmbed = embeds.info(
-        'Shop',
-        '> Browse items and customize your experience\n\nSelect a category below to view available items:'
-      );
-
-      const buttons = new ActionRowBuilder()
-        .addComponents(
-          new ButtonBuilder()
-            .setCustomId(`shop_cats_${userId}`)
-            .setLabel('Cats')
-            .setStyle(ButtonStyle.Primary),
-          new ButtonBuilder()
-            .setCustomId(`shop_names_${userId}`)
-            .setLabel('Styles')
-            .setStyle(ButtonStyle.Secondary),
-          new ButtonBuilder()
-            .setCustomId(`shop_tools_${userId}`)
-            .setLabel('Tools')
-            .setStyle(ButtonStyle.Success)
-        );
-
-      interaction.update({ embeds: [shopEmbed], components: [buttons] });
     }
   }
 };

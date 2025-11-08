@@ -38,7 +38,7 @@ module.exports = {
         invitesList += `**${i + 1}.** ${gang.name}\n`;
         invitesList += `   👑 Leader: ${inviterName}\n`;
         invitesList += `   👥 Members: ${gang.members.length}/${gang.maxMembers}\n`;
-        invitesList += `   💪 Power: ${gang.power}\n`;
+
         invitesList += `   ⏰ Expires in: ${timeLeft}h\n\n`;
       }
 

@@ -35,7 +35,7 @@ module.exports = {
 
     try {
       const updatedUser = await economy.addMoney(targetUser.id, amount, 'admin');
-      
+
       message.channel.send(`💰 Successfully granted **${economy.formatMoney(amount)} coins** to ${targetUser.username}`);
 
       // Notify the recipient

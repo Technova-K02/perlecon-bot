@@ -21,9 +21,10 @@ module.exports = {
   async execute(message, args) {
     try {
       // Check if user is kidnapped
-      if (await isUserKidnapped(message.author.id)) {
-        const errorEmbed = embeds.error('Kidnapped', 'You are kidnapped and cannot purchase upgrades');
-        return message.channel.send({ embeds: [errorEmbed] });
+      const { getKidnapErrorEmbed } = require('../../utils/kidnapping');
+      const kidnapError = await getKidnapErrorEmbed(message.author.id, 'purchase upgrades');
+      if (kidnapError) {
+        return message.channel.send({ embeds: [kidnapError] });
       }
 
       const user = await User.findOne({ userId: message.author.id });

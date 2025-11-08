@@ -21,7 +21,7 @@ module.exports = {
       }
 
       if (gang.leaderId === message.author.id) {
-        const errorEmbed = embeds.error('Cannot Leave', 'You cannot leave your own gang. Use `!gangdisband` to disband it, or `!gangpromote <@user>` to transfer leadership first.');
+        const errorEmbed = embeds.error('Cannot Leave', 'You cannot leave your own gang. Use `.disgang` to disband it, or `.promote <@user>` to transfer leadership first.');
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
