@@ -215,8 +215,8 @@ module.exports = {
         await targetGang.save();
 
         let resultMessage = `**${attackerGang.name}** failed to rob **${targetGang.name}**!\n\n` +
-          `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n` +
-          `**Roll:** ${roll.toFixed(1)}%\n`;
+          `**Success Rate:** ${finalSuccessRate.toFixed(1)}%\n`
+          // `**Roll:** ${roll.toFixed(1)}%\n`;
         
         if (lockpickUsed) {
           resultMessage += `**Tool Used:** ${lockpickUsed}\n`;
@@ -225,8 +225,8 @@ module.exports = {
           }
         }
         
-        resultMessage += `\n**Power Lost:** -1 (Total: ${attackerGang.power})\n` +
-          `**Target Power Gained:** +2`;
+        // resultMessage += `\n**Power Lost:** -1 (Total: ${attackerGang.power})\n` +
+          // `**Target Power Gained:** +2`;
 
         const embed = embeds.error('Robbery Failed!', resultMessage);
         return message.channel.send({ embeds: [embed] });

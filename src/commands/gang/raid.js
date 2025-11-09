@@ -50,10 +50,10 @@ module.exports = {
       }
 
       // Check if user is gang leader
-      if (attackerGang.leaderId !== message.author.id) {
-        const errorEmbed = embeds.error('Permission Denied', 'Only gang leaders can initiate raids');
-        return message.channel.send({ embeds: [errorEmbed] });
-      }
+      // if (attackerGang.leaderId !== message.author.id) {
+      //   const errorEmbed = embeds.error('Permission Denied', 'Only gang leaders can initiate raids');
+      //   return message.channel.send({ embeds: [errorEmbed] });
+      // }
 
       // Check raid cooldown (1 minute)
       if (isGangOnRaidCooldown(attackerGang)) {
@@ -114,9 +114,11 @@ module.exports = {
       await attackerGang.save();
 
       if (success) {
-        // Calculate damage
+        // Calculate damage with random range
         const targetBaseStats = getBaseStats(targetGang.base.level);
-        let baseDamage = Math.floor(targetBaseStats.maxHP * 0.1); // 10% of max HP as base damage
+        const minDamage = Math.floor(targetBaseStats.maxHP * 0.05); // 5% of max HP
+        const maxDamage = Math.floor(targetBaseStats.maxHP * 0.15); // 15% of max HP
+        let baseDamage = Math.floor(Math.random() * (maxDamage - minDamage + 1)) + minDamage;
 
         // Add weapon upgrade damage bonus
         const weaponDamageBonus = getWeaponDamageBonus(weaponLevel);
@@ -139,17 +141,17 @@ module.exports = {
         if (gangDestroyed) {
           // Gang destroyed - take ALL remaining vault money
           coinsStolen = targetGang.vault;
-          
+
           // Get attacker gang vault limit
           const attackerBaseLevel = attackerGang.base?.level || 1;
           const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
-          
+
           // Transfer all money (up to vault limit)
           const maxCanReceive = attackerVaultLimit - attackerGang.vault;
           const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
-          
+
           attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
-          
+
           // Remove all members from the gang
           const targetMembers = [...targetGang.members];
           for (const memberId of targetMembers) {
@@ -158,29 +160,23 @@ module.exports = {
               { gang: null, status: 'outside' }
             );
           }
-          
+
           // Delete the gang completely
           await Gang.findByIdAndDelete(targetGang._id);
-          
+
           // Update attacker stats
           attackerGang.raids += 1;
           attackerGang.wins += 1;
           attackerGang.power += 25; // Bonus power for destroying a gang
           await attackerGang.save();
-          
+
           const embed = embeds.success(
             '💥 GANG DESTROYED!',
-            `**${attackerGang.name}** has completely destroyed **${targetGang.name}**!\n\n` +
-            `**Damage Dealt:** ${baseDamage} HP\n` +
-            `**Gang Status:** 💀 ELIMINATED\n` +
-            `**Total Coins Seized:** ${economy.formatMoney(actualCoinsStolen)}\n` +
-            `**Success Rate:** ${successRate.toFixed(1)}%\n` +
-            // `**Power Gained:** +25\n\n` +
-            `The gang has been disbanded and all members have been kicked out!`
+            `**${attackerGang.name}** has completely destroyed **${targetGang.name}**\n\n`
           );
-          
+
           return message.channel.send({ embeds: [embed] });
-          
+
         } else {
           // Normal raid - steal 5-15% of vault
           const stealPercentage = Math.random() * 0.1 + 0.05; // 5-15%
@@ -190,11 +186,11 @@ module.exports = {
             // Get attacker gang vault limit
             const attackerBaseLevel = attackerGang.base?.level || 1;
             const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
-            
+
             // Ensure attacker's vault doesn't exceed limit
             const maxCanReceive = attackerVaultLimit - attackerGang.vault;
             const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
-            
+
             targetGang.vault = Math.max(0, targetGang.vault - actualCoinsStolen);
             attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
           }
@@ -238,7 +234,7 @@ module.exports = {
         const embed = embeds.error(
           'Raid Failed!',
           `**${attackerGang.name}** failed to raid **${targetGang.name}**!\n\n` +
-          `**Success Rate:** ${successRate.toFixed(1)}%\n` 
+          `**Success Rate:** ${successRate.toFixed(1)}%\n`
           // `**Roll:** ${roll.toFixed(1)}%\n\n`
           // `**Power Lost:** -3 (Total: ${attackerGang.power})\n` +
           // `**Target Power Gained:** +5`

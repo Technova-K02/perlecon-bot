@@ -60,16 +60,16 @@ const UPGRADES = {
     costMultiplier: 1.5,
     effectPerLevel: 'Medics heal 15% more each level',
     description: 'Train your medics to repair base damage more effectively'
-  },
-  bases: {
-    name: 'Base',
-    maxLevel: 8,
-    baseCost: 10000,
-    costMultiplier: 1.75,
-    effectPerLevel: 'Increases max HP, safe capacity, and army size',
-    description: 'Upgrade your base to increase its maximum health, safe capacity for storing coins, and the number of guards and medics you can hire',
-    getLevelName: (level) => BASE_NAMES[level] || `Level ${level} Base`
   }
+  // bases: {
+  //   name: 'Base',
+  //   maxLevel: 8,
+  //   baseCost: 10000,
+  //   costMultiplier: 1.75,
+  //   effectPerLevel: 'Increases max HP, safe capacity, and army size',
+  //   description: 'Upgrade your base to increase its maximum health, safe capacity for storing coins, and the number of guards and medics you can hire',
+  //   getLevelName: (level) => BASE_NAMES[level] || `Level ${level} Base`
+  // }
 };
 
 /**

@@ -69,7 +69,7 @@ const SHOP_ITEMS = {
 
   // Gang Tools
   'basic-lockpick': { 
-    price: 6000, 
+    price: 25000, 
     category: 'Tools', 
     description: 'Permanently upgrades your gang with +10% robbing success. One-time purchase.', 
     displayName: 'Basic Lockpick',
@@ -78,7 +78,7 @@ const SHOP_ITEMS = {
     effect: '+10% success chance (permanent)'
   },
   'steel-lockpick': { 
-    price: 12000, 
+    price: 75000, 
     category: 'Tools', 
     description: 'Permanently upgrades your gang with +25% robbing success. One-time purchase.', 
     displayName: 'Steel Lockpick',
@@ -87,7 +87,7 @@ const SHOP_ITEMS = {
     effect: '+25% success (permanent)'
   },
   'titan-lockpick': { 
-    price: 25000, 
+    price: 120000, 
     category: 'Tools', 
     description: 'Permanently upgrades your gang with +45% success and +2000 steal cap. One-time purchase.', 
     displayName: 'Titan Lockpick',
@@ -96,7 +96,7 @@ const SHOP_ITEMS = {
     effect: '+45% success; +2000 steal cap (permanent)'
   },
   'breach-charge': { 
-    price: 40000, 
+    price: 100000, 
     category: 'Tools', 
     description: 'Explosive charge for raiding with +30% success and +100 bonus damage.', 
     displayName: 'Breach Charge',
