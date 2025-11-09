@@ -33,7 +33,7 @@ const UPGRADES = {
     maxLevel: 10,
     baseCost: 5000,
     costMultiplier: 1.5,
-    effectPerLevel: '+5% raid damage and +5% success chance per level',
+    effectPerLevel: '+15% raid damage and +5% success chance per level',
     description: 'Improve your gang\'s weapons to deal more damage and have higher success rates in raids'
   },
   walls: {
@@ -120,7 +120,7 @@ function getBaseName(level) {
  * @returns {number} - Damage bonus percentage
  */
 function getWeaponDamageBonus(weaponLevel) {
-  return (weaponLevel - 1) * 5; // 5% per level above 1
+  return (weaponLevel - 1) * 15; // 15% per level above 1
 }
 
 /**

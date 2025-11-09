@@ -164,29 +164,29 @@ module.exports = {
       // Perform the upgrade
       user.pocket -= upgradeCost;
       gang.upgrades[actualUpgradeType] = currentLevel + 1;
-      
+
       await gang.save();
       await user.save(); // FIXED: Save user to persist pocket changes
 
       let upgradeMessage = `You paid ${upgradeCost} and ${upgradeInfo.name} upgraded to level **${currentLevel + 1}**!`;
-        // `**Cost:** ${economy.formatMoney(upgradeCost)} coins\n` +
-        // `**Effect:** ${upgradeInfo.effectPerLevel}\n`;
+      // `**Cost:** ${economy.formatMoney(upgradeCost)} coins\n` +
+      // `**Effect:** ${upgradeInfo.effectPerLevel}\n`;
 
       // Add specific upgrade effects
       // if (actualUpgradeType === 'weapons') {
-      //   const damageBonus = getWeaponDamageBonus(currentLevel + 1);
-      //   const successBonus = getWeaponSuccessBonus(currentLevel + 1);
-      //   upgradeMessage += `**Current Bonuses:** +${damageBonus}% raid damage, +${successBonus}% raid success\n`;
+      // const damageBonus = getWeaponDamageBonus(currentLevel + 1);
+      // const successBonus = getWeaponSuccessBonus(currentLevel + 1);
+      // upgradeMessage += `**Current Bonuses:** +${damageBonus}% raid damage, +${successBonus}% raid success\n`;
       // } else if (actualUpgradeType === 'walls') {
-      //   const defenseBonus = getWallDefenseBonus(currentLevel + 1);
-      //   upgradeMessage += `**New Wall:** ${getWallName(currentLevel + 1)}\n`;
-      //   upgradeMessage += `**Defense Bonus:** -${defenseBonus}% chance of being raided\n`;
+      // const defenseBonus = getWallDefenseBonus(currentLevel + 1);
+      // upgradeMessage += `**New Wall:** ${getWallName(currentLevel + 1)}\n`;
+      // upgradeMessage += `**Defense Bonus:** -${defenseBonus}% chance of being raided\n`;
       // } else if (actualUpgradeType === 'guardsTraining') {
-      //   const guardBonus = getGuardTrainingBonus(currentLevel + 1);
-      //   upgradeMessage += `**Defense Bonus:** -${guardBonus}% chance of robbery/kidnapping\n`;
+      // const guardBonus = getGuardTrainingBonus(currentLevel + 1);
+      // upgradeMessage += `**Defense Bonus:** -${guardBonus}% chance of robbery/kidnapping\n`;
       // } else if (actualUpgradeType === 'medicTraining') {
-      //   const medicBonus = getMedicTrainingBonus(currentLevel + 1);
-      //   upgradeMessage += `**Healing Bonus:** +${medicBonus}% base repair efficiency\n`;
+      // const medicBonus = getMedicTrainingBonus(currentLevel + 1);
+      // upgradeMessage += `**Healing Bonus:** +${medicBonus}% base repair efficiency\n`;
       // }
 
       // upgradeMessage += `\n**Remaining Vault:** ${economy.formatMoney(gang.vault)} coins`;
@@ -272,7 +272,7 @@ async function handleIndividualUpgrade(message, gang, user, type) {
 
   const levels = type === 'guard' ? gang.army.guardLevels : gang.army.medicLevels;
   const count = type === 'guard' ? gang.army.guards : gang.army.medics;
-  
+
   // Ensure levels array matches count
   while (levels.length < count) {
     levels.push(1);
@@ -317,14 +317,14 @@ async function handleIndividualUpgrade(message, gang, user, type) {
 // Handle bulk upgrade (upgrades all lowest level units to match the next level)
 async function handleBulkUpgrade(message, gang, user, type) {
   const unitType = type === 'guards' ? 'guard' : 'medic';
-  
+
   // Initialize army arrays if they don't exist
   if (!gang.army.guardLevels) gang.army.guardLevels = [];
   if (!gang.army.medicLevels) gang.army.medicLevels = [];
 
   const levels = type === 'guards' ? gang.army.guardLevels : gang.army.medicLevels;
   const count = type === 'guards' ? gang.army.guards : gang.army.medics;
-  
+
   // Ensure levels array matches count
   while (levels.length < count) {
     levels.push(1);

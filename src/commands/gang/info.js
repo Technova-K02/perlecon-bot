@@ -37,7 +37,7 @@ module.exports = {
 
         // Generate level-based pricing display
         let levelPricing = '';
-        
+
         // Special handling for base upgrades
         if (upgradeType === 'bases') {
           // Base upgrade costs are stored in the base stats table
@@ -51,21 +51,22 @@ module.exports = {
             7: { name: 'Citadel', maxHP: 3800, safeCapacity: 150000, maxGuards: 16, maxMedics: 8, upgradeCost: 110000 },
             8: { name: 'Kingdom', maxHP: 5000, safeCapacity: 200000, maxGuards: 18, maxMedics: 9, upgradeCost: 150000 }
           };
-          
+
           for (let level = 1; level <= upgrade.maxLevel; level++) {
             const stats = baseData[level];
             const baseName = getBaseName(level);
-            levelPricing += `lvl ${level} - ${baseName} - ${economy.formatMoney(stats.upgradeCost)} coins\n`;
+            levelPricing += `**lvl ${level} - ${baseName} - ${economy.formatMoney(stats.upgradeCost)} coins**\n`;
             levelPricing += `  └ HP: ${stats.maxHP} | Safe: ${economy.formatMoney(stats.safeCapacity)} | Guards: ${stats.maxGuards} | Medics: ${stats.maxMedics}\n`;
             if (level < upgrade.maxLevel) {
               levelPricing += ' ';
             }
           }
-        } else {
+        } else { 
+          levelPricing += `lvl 1 - 0 coins\n`;
           // Standard upgrade pricing
           for (let level = 1; level <= Math.min(upgrade.maxLevel, 9); level++) {
             const cost = getUpgradeCost(upgradeType, level);
-            levelPricing += `lvl ${level} - ${economy.formatMoney(cost)} coins\n`;
+            levelPricing += `lvl ${level + 1} - ${economy.formatMoney(cost)} coins\n`;
             if (level < Math.min(upgrade.maxLevel, 10)) {
               levelPricing += ' ';
             }

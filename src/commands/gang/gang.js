@@ -82,7 +82,10 @@ async function handleGangInfo(gang, message, isOwnGang = false) {
 
     const title = isOwnGang ? `${gang.name} - Your Gang` : `${gang.name} Gang Info`;
 
-    const vaultLimit = gangs.getVaultLimit(gang.level);
+    // Get vault limit from base level, not gang level
+    const baseLevel = gang.base?.level || 1;
+    const baseStats = getBaseStats(baseLevel);
+    const vaultLimit = baseStats.safeCapacity;
 
     // Get all member info
     let membersText = '';
@@ -131,8 +134,8 @@ async function handleGangInfo(gang, message, isOwnGang = false) {
       { name: '**Base**', value: `${getBaseName(gang.base.level)} (lvl ${gang.base.level})`, inline: true },
       { name: '**Walls**', value: `${getWallName(wallLevel)} (lvl ${wallLevel})`, inline: true },
       { name: '**Weapons**', value: `Level ${weaponsLevel}`, inline: true },
-      { name: '**Guards**', value: `${guards}/4`, inline: true },
-      { name: '**Medics**', value: `${medics}/4`, inline: true },
+      { name: '**Guards**', value: `${guards}/${maxHP.maxGuards}`, inline: true },
+      { name: '**Medics**', value: `${medics}/${maxHP.maxMedics}`, inline: true },
       { name: '**HP**', value: `${gang.base.hp}/${maxHP.maxHP}`, inline: true },
       { name: '**Members**', value: `${memberCount}/${gang.maxMembers}`, inline: true },
       { name: '**Safe**', value: `${economy.formatMoney(gang.vault)}/${economy.formatMoney(vaultLimit)} coins`, inline: true },

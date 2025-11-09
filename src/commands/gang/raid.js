@@ -132,46 +132,97 @@ module.exports = {
         const newHP = Math.max(0, currentHP - baseDamage);
         targetGang.base.hp = newHP;
 
-        // Calculate coins stolen (5-15% of target's Gang Safe)
-        const stealPercentage = Math.random() * 0.1 + 0.05; // 5-15%
-        const coinsStolen = Math.floor(targetGang.vault * stealPercentage);
+        // Check if gang is destroyed (HP = 0)
+        const gangDestroyed = newHP === 0;
+        let coinsStolen = 0;
 
-        if (coinsStolen > 0) {
+        if (gangDestroyed) {
+          // Gang destroyed - take ALL remaining vault money
+          coinsStolen = targetGang.vault;
+          
           // Get attacker gang vault limit
           const attackerBaseLevel = attackerGang.base?.level || 1;
           const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
           
-          // Ensure attacker's vault doesn't exceed limit
+          // Transfer all money (up to vault limit)
           const maxCanReceive = attackerVaultLimit - attackerGang.vault;
           const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
           
-          targetGang.vault = Math.max(0, targetGang.vault - actualCoinsStolen);
           attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
+          
+          // Remove all members from the gang
+          const targetMembers = [...targetGang.members];
+          for (const memberId of targetMembers) {
+            await User.findOneAndUpdate(
+              { userId: memberId },
+              { gang: null, status: 'outside' }
+            );
+          }
+          
+          // Delete the gang completely
+          await Gang.findByIdAndDelete(targetGang._id);
+          
+          // Update attacker stats
+          attackerGang.raids += 1;
+          attackerGang.wins += 1;
+          attackerGang.power += 25; // Bonus power for destroying a gang
+          await attackerGang.save();
+          
+          const embed = embeds.success(
+            '💥 GANG DESTROYED!',
+            `**${attackerGang.name}** has completely destroyed **${targetGang.name}**!\n\n` +
+            `**Damage Dealt:** ${baseDamage} HP\n` +
+            `**Gang Status:** 💀 ELIMINATED\n` +
+            `**Total Coins Seized:** ${economy.formatMoney(actualCoinsStolen)}\n` +
+            `**Success Rate:** ${successRate.toFixed(1)}%\n` +
+            // `**Power Gained:** +25\n\n` +
+            `The gang has been disbanded and all members have been kicked out!`
+          );
+          
+          return message.channel.send({ embeds: [embed] });
+          
+        } else {
+          // Normal raid - steal 5-15% of vault
+          const stealPercentage = Math.random() * 0.1 + 0.05; // 5-15%
+          coinsStolen = Math.floor(targetGang.vault * stealPercentage);
+
+          if (coinsStolen > 0) {
+            // Get attacker gang vault limit
+            const attackerBaseLevel = attackerGang.base?.level || 1;
+            const attackerVaultLimit = getBaseStats(attackerBaseLevel).safeCapacity;
+            
+            // Ensure attacker's vault doesn't exceed limit
+            const maxCanReceive = attackerVaultLimit - attackerGang.vault;
+            const actualCoinsStolen = Math.min(coinsStolen, maxCanReceive);
+            
+            targetGang.vault = Math.max(0, targetGang.vault - actualCoinsStolen);
+            attackerGang.vault = Math.min(attackerVaultLimit, attackerGang.vault + actualCoinsStolen);
+          }
+
+          // Update gang stats
+          attackerGang.raids += 1;
+          attackerGang.wins += 1;
+          attackerGang.power += 10;
+
+          targetGang.losses += 1;
+          if (targetGang.power > 5) targetGang.power -= 5;
+
+          await targetGang.save();
+          await attackerGang.save();
+
+          const embed = embeds.success(
+            '⚔️ Raid Successful!',
+            `**${attackerGang.name}** successfully raided **${targetGang.name}**!\n\n` +
+            `**Damage Dealt:** ${baseDamage} HP\n` +
+            `**Target Base HP:** ${newHP}/${targetBaseStats.maxHP}\n` +
+            `**Coins Stolen:** ${economy.formatMoney(coinsStolen)}\n` +
+            `**Success Rate:** ${successRate.toFixed(1)}%\n`
+            // `**Your Gang Safe:** ${economy.formatMoney(attackerGang.vault)} coins\n` +
+            // `**Power Gained:** +10 (Total: ${attackerGang.power})`
+          );
+
+          return message.channel.send({ embeds: [embed] });
         }
-
-        // Update gang stats
-        attackerGang.raids += 1;
-        attackerGang.wins += 1;
-        attackerGang.power += 10;
-
-        targetGang.losses += 1;
-        if (targetGang.power > 5) targetGang.power -= 5;
-
-        await targetGang.save();
-        await attackerGang.save();
-
-        const embed = embeds.success(
-          '⚔️ Raid Successful!',
-          `**${attackerGang.name}** successfully raided **${targetGang.name}**!\n\n` +
-          `**Damage Dealt:** ${baseDamage} HP\n` +
-          `**Target Base HP:** ${newHP}/${targetBaseStats.maxHP}\n` +
-          `**Coins Stolen:** ${economy.formatMoney(coinsStolen)}\n` +
-          `**Success Rate:** ${successRate.toFixed(1)}%\n`
-          // `**Your Gang Safe:** ${economy.formatMoney(attackerGang.vault)} coins\n` +
-          // `**Power Gained:** +10 (Total: ${attackerGang.power})`
-        );
-
-        return message.channel.send({ embeds: [embed] });
 
       } else {
         // Raid failed
