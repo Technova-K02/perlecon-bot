@@ -238,7 +238,7 @@ async function handleBaseUpgrade(message, gang, user) {
   const oldStats = getBaseStats(gang.base.level);
   gang.base.level += 1;
   user.pocket -= upgradeCost; // FIXED: Deduct from user pocket, not gang vault
-  gang.base.guards = nextLevelStats.maxGuards;
+  gang.army.guards = nextLevelStats.maxGuards;
   gang.base.hp = nextLevelStats.maxHP; // Restore to full HP on upgrade
 
   await gang.save();

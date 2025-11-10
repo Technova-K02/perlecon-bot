@@ -61,7 +61,7 @@ module.exports = {
 
       // Check cooldown (2 minutes per user)
       const cooldownKey = 'repair';
-      const cooldownTime = 2 * 60 * 1000; // 2 minutes in milliseconds
+      const cooldownTime = 60 * 1000; // 1 minutes in milliseconds
       const lastRepair = user.cooldowns.get(cooldownKey) || 0;
       const timeLeft = lastRepair + cooldownTime - Date.now();
 
@@ -113,9 +113,9 @@ module.exports = {
       
       repairMessage += `**Healing per medic:** ${healingPerMedic} HP\n` +
         `**Total repaired:** ${actualRepair} HP\n` +
-        `**Current HP:** ${newHP}/${baseStats.maxHP}\n` +
-        `**Base condition:** ${getBaseCondition(newHP, baseStats.maxHP)}\n\n` +
-        `**Cooldown:** 2 minutes`;
+        `**Current HP:** ${newHP}/${baseStats.maxHP}\n`;
+        // `**Base condition:** ${getBaseCondition(newHP, baseStats.maxHP)}\n\n` +
+        // `**Cooldown:** 1 minutes`;
 
       const embed = embeds.success('Base Repaired', repairMessage);
 

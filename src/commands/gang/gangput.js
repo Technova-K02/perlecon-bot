@@ -108,7 +108,7 @@ module.exports = {
 
       const embed = embeds.success(
         'Gang Deposit',
-        `You deposited **${economy.formatMoney(amount)} coins** to **${gang.name}**'s vault\n\n` +
+        `You deposited **${economy.formatMoney(amount)} coins** to **${gang.name}**'s safe\n\n` +
         `**Gang Safe:** ${economy.formatMoney(gang.vault)} coins\n` +
         `**Your Pocket:** ${economy.formatMoney(user.pocket)} coins`
       );

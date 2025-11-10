@@ -2,12 +2,34 @@ const economy = require('../../utils/economy');
 const embeds = require('../../utils/embeds');
 const config = require('../../config/config');
 
-const DAILY_COOLDOWN = config.economy.dailyCooldown; // 24 hours
 const DAILY_AMOUNT = config.economy.dailyAmount; // 1000 coins
+
+// Get next 4pm EST reset time
+function getNextDailyReset(lastClaimTime) {
+  const now = new Date();
+  const estOffset = -5 * 60; // EST is UTC-5
+
+  // Convert current time to EST
+  const estNow = new Date(now.getTime() + (estOffset * 60 * 1000));
+
+  // Get today's 4pm EST
+  const todayReset = new Date(estNow);
+  todayReset.setHours(16, 0, 0, 0); // 4pm EST
+
+  // If we haven't hit 4pm EST today, use today's reset
+  // Otherwise use tomorrow's reset
+  if (estNow < todayReset) {
+    return todayReset.getTime() - (estOffset * 60 * 1000); // Convert back to UTC
+  } else {
+    const tomorrowReset = new Date(todayReset);
+    tomorrowReset.setDate(tomorrowReset.getDate() + 1);
+    return tomorrowReset.getTime() - (estOffset * 60 * 1000); // Convert back to UTC
+  }
+}
 
 module.exports = {
   name: 'daily',
-  description: 'Claim your daily reward',
+  description: 'Claim your daily reward (resets at 4pm EST)',
   async execute(message) {
     try {
       const userId = message.author.id;
@@ -15,15 +37,16 @@ module.exports = {
 
       const now = Date.now();
       const lastDaily = user.cooldowns?.get('daily') || 0;
+      const nextReset = getNextDailyReset(lastDaily);
 
-      // Check if user is still on cooldown
-      if (now < lastDaily + DAILY_COOLDOWN) {
-        const remaining = lastDaily + DAILY_COOLDOWN - now;
+      // Check if user is still on cooldown (hasn't reached next 4pm EST)
+      if (now < nextReset && lastDaily > 0) {
+        const remaining = nextReset - now;
         const hours = Math.floor(remaining / (1000 * 60 * 60));
         const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-        const errorEmbed = embeds.error('⏰ Daily Reward Not Ready', `You can claim your daily reward in **${hours}h ${minutes}m ${seconds}s**\n\nCome back tomorrow for your ${economy.formatMoney(DAILY_AMOUNT)} coins`);
+        const errorEmbed = embeds.error('⏰ Daily Reward Not Ready', `You can claim your daily reward in **${hours}h ${minutes}m ${seconds}s**\n\nCome back at 4pm EST for your ${economy.formatMoney(DAILY_AMOUNT)} coins`);
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
@@ -31,11 +54,11 @@ module.exports = {
       let streakBonus = 0;
       let currentStreak = user.dailyStreak || 0;
 
-      // Check if user claimed yesterday (within 48 hours but after 24 hours)
-      const yesterday = now - DAILY_COOLDOWN;
-      const twoDaysAgo = now - (DAILY_COOLDOWN * 2);
+      // Check if user claimed yesterday (within last 48 hours)
+      const oneDayAgo = now - (24 * 60 * 60 * 1000);
+      const twoDaysAgo = now - (48 * 60 * 60 * 1000);
 
-      if (lastDaily >= twoDaysAgo && lastDaily <= yesterday + 3600000) { // 1 hour grace period
+      if (lastDaily >= twoDaysAgo && lastDaily < oneDayAgo) {
         currentStreak += 1;
       } else if (lastDaily < twoDaysAgo) {
         currentStreak = 1; // Reset streak if more than 2 days

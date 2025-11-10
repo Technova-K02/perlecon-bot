@@ -53,6 +53,7 @@ module.exports = {
           value: ' `.raid <gang>` ' +
             '`.rob <gang>` ' +
             '`.kidnap <@user>`  ' +
+            '`.release <@user>`  ' +
             '`.hostages` ',
           inline: true
         },

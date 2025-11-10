@@ -37,8 +37,8 @@ module.exports = {
           return message.channel.send({ embeds: [errorEmbed] });
         }
 
-        if (guardsToTake > gang.base.guards) {
-          const errorEmbed = embeds.error('Not Enough Guards', `Your base only has ${gang.base.guards} guards available`);
+        if (guardsToTake > gang.army.guards) {
+          const errorEmbed = embeds.error('Not Enough Guards', `Your base only has ${gang.army.guards} guards available`);
           return message.channel.send({ embeds: [errorEmbed] });
         }
       }
@@ -50,7 +50,7 @@ module.exports = {
 
       // Remove guards from base temporarily
       if (guardsToTake > 0) {
-        gang.base.guards -= guardsToTake;
+        gang.army.guards -= guardsToTake;
         await gang.save();
       }
 

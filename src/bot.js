@@ -66,7 +66,7 @@ const commandList = [
   'ssfadf', 'steal', 'takeall', 'transactions', 'weekly', 'take', 'work', 'pocket', 'safe',
 
   // Gang Commands
-  'army', 'base12321', 'buy', 'makegang', 'gang', 'bangang', 'battlegang', 'descriptiongang', 'disgang',
+  'army', 'base12321', 'buy', 'release', 'makegang', 'gang', 'bangang', 'battlegang', 'descriptiongang', 'disgang',
   'helpgang', 'infogang', 'invitations', 'addgang', 'kickgang', 'ganglb', 'leavegang',
   'listgang', 'members', 'officergang', 'promote', 'putgang', 'renamegang', 'searchgang132',
   'settingsgang', 'statsgang321312', 'getgang', 'safegang', 'hire', 'hostages', 'info', 'kidnap',

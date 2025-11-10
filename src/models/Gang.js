@@ -25,7 +25,7 @@ const gangSchema = new mongoose.Schema({
   // Base system
   base: {
     level: { type: Number, default: 1 },
-    guards: { type: Number, default: 4 }, // Start with 4 guards (Trailer level)
+    // guards: { type: Number, default: 4 }, // Start with 4 guards (Trailer level)
     defenses: { type: Number, default: 0 },
     hp: { type: Number, default: 250 }, // Start with 250 HP (Trailer level)
     lastRaid: { type: Date, default: null }

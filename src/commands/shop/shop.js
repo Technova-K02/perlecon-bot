@@ -76,10 +76,14 @@ module.exports = {
           'Click on an item below to purchase it:';
       }
 
-      const categoryEmbed = embeds.info(
+      let categoryEmbed = embeds.info(
         `Shop - ${category.charAt(0).toUpperCase() + category.slice(1)}`,
         categoryDescription
       );
+
+      if(category === 'styles'){
+        categoryEmbed.setFooter({text: `.wardrobe to wear a style`});
+      }
 
       // Create buttons for items (max 5 per row, max 25 total)
       const buttons = [];

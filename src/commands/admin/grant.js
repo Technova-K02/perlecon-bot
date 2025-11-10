@@ -6,8 +6,9 @@ module.exports = {
   description: 'Grant money to a user (Admin only)',
   async execute(message, args) {
     // Simple admin check - in production, you'd want proper role checking
-    if (message.author.id !== process.env.OWNER_ID && message.author.id !== '1425862221321469994') {
-      const errorEmbed = embeds.error('Permission Denied', 'Only the bot owner can use this command.');
+    const isAdmin = message.member && message.member.permissions.has('ADMINISTRATOR');
+    if (message.author.id !== process.env.OWNER_ID && message.author.id !== '1425862221321469994' && !isAdmin) {
+      const errorEmbed = embeds.error('Permission Denied', 'Only the bot owner/admin can use this command.');
       return message.channel.send({ embeds: [errorEmbed] });
     }
 

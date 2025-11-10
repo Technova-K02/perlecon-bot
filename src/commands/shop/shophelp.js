@@ -8,10 +8,10 @@ module.exports = {
       'Shop System Help',
       '> Purchase items and customize your experience\n')
       .addFields(
-        { name: 'Browse', value: '`.shop`\n`', inline: true },
-        // { name: 'Purchase', value: '`.shop buy <item-id>`', inline: true },
-        { name: 'Inventory', value: '`.inventory(.inv) <user>`\n`', inline: true },
-        { name: 'Styles', value: '`.wardrobe`\n`.styles`', inline: true }
+        { name: 'Browse', value: '`.shop`\n', inline: true },
+        // { name: 'Purchase', value: '`.shop buy <item-id>`', iline: true },
+        { name: 'Inventory', value: '`.inventory(.inv) <user>`\n', inline: true },
+        { name: 'Styles', value: '`.wardrobe`', inline: true }
       )
       .setFooter({ text: 'Start with .shop to browse available items' });
 
