@@ -15,12 +15,12 @@ module.exports = {
       {
         name: '💰 **Jackpot Payouts** (3 Matching Symbols)',
         value: 
-          '🍒🍒🍒 = **3x** your bet\n' +
-          '🍊🍊🍊 = **6x** your bet\n' +
-          '🍋🍋🍋 = **10x** your bet\n' +
-          '🍇🍇🍇 = **20x** your bet\n' +
-          '⭐⭐⭐ = **50x** your bet\n' +
-          '💎💎💎 = **100x** your bet\n' +
+          '🍒🍒🍒 = **2x** your bet\n' +
+          '🍊🍊🍊 = **3x** your bet\n' +
+          '🍋🍋🍋 = **6x** your bet\n' +
+          '🍇🍇🍇 = **10x** your bet\n' +
+          '⭐⭐⭐ = **20x** your bet\n' +
+          '💎💎💎 = **50x** your bet\n' +
           '7️⃣7️⃣7️⃣ = **250x** your bet 🔥',
         inline: true
       },

@@ -44,8 +44,8 @@ module.exports = {
         const errorEmbed = embeds.error('Name Taken', 'A gang with this name already exists');
         return message.channel.send({ embeds: [errorEmbed] });
       }
-
-      if (name[0] === '@') {
+      const mentionedUser = message.mentions.users.first();
+      if (mentionedUser) {
         const errorEmbed = embeds.error('Invalid gang name', 'A gang name should start with normal alphabet like .makegang perlecon.');
         return message.channel.send({ embeds: [errorEmbed] });
       }

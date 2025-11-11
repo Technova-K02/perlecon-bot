@@ -8,10 +8,10 @@ module.exports = {
   description: 'Bet coins on a toss',
   async execute(msg, args) {
     const bet = parseInt(args[0]);
-    if (isNaN(bet) || bet < 5000) {
+    if (isNaN(bet)) {
       const errorEmbed = embeds.error(
         'Invalid Bet',
-        'The minimum amount is 5000.'
+        ' '
       );
       return msg.channel.send({ embeds: [errorEmbed] });
     }

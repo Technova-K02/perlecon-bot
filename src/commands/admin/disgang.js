@@ -5,7 +5,7 @@ const embeds = require('../../utils/embeds');
 
 module.exports = {
   name: 'deletegang',
-  description: 'Disband a specific gang by name (Admin/Owner only)',
+  description: 'Disband a specific gang by name or user mention (Admin/Owner only)',
   async execute(message, args) {
     // Check if user is bot owner or has admin permissions
     const isOwner = message.author.id === process.env.OWNER_ID;
@@ -16,32 +16,62 @@ module.exports = {
       return message.channel.send({ embeds: [errorEmbed] });
     }
 
-    // Check if gang name was provided
+    // Check if gang name or user mention was provided
     if (!args.length) {
       const helpEmbed = embeds.info(
         'Disband Gang Command',
-        '**Usage:** `.disbandgang <gang name>`\n\n' +
-        '**Example:** `.disbandgang BadGangName`\n\n' +
+        '**Usage:** `.deletegang <gang name>` or `.deletegang <@user>`\n\n' +
+        '**Examples:**\n' +
+        '• `.deletegang BadGangName` - Delete gang by name\n' +
+        '• `.deletegang @username` - Delete the gang of mentioned user\n\n' +
         'This will disband the specified gang and remove all members from it.'
       );
       return message.channel.send({ embeds: [helpEmbed] });
     }
 
-    const gangName = args.join(' ');
-
     try {
-      // Find the gang by name (case-insensitive)
-      const gang = await Gang.findOne({ 
-        name: { $regex: new RegExp(`^${gangName}$`, 'i') }
-      });
+      let gang;
+      
+      // Check if user was mentioned
+      const mentionedUser = message.mentions.users.first();
+      
+      if (mentionedUser) {
+        // Find user's gang
+        const user = await User.findOne({ userId: mentionedUser.id });
+        
+        if (!user || !user.gang) {
+          const errorEmbed = embeds.error(
+            'No Gang Found',
+            `${mentionedUser.username} is not in any gang.`
+          );
+          return message.channel.send({ embeds: [errorEmbed] });
+        }
+        
+        // Find the gang by user's gang ID
+        gang = await Gang.findById(user.gang);
+        
+        if (!gang) {
+          const errorEmbed = embeds.error(
+            'Gang Not Found',
+            'Could not find the gang data. It may have been deleted.'
+          );
+          return message.channel.send({ embeds: [errorEmbed] });
+        }
+      } else {
+        // Find the gang by name (case-insensitive)
+        const gangName = args.join(' ');
+        gang = await Gang.findOne({ 
+          name: { $regex: new RegExp(`^${gangName}$`, 'i') }
+        });
 
-      if (!gang) {
-        const errorEmbed = embeds.error(
-          'Gang Not Found',
-          `No gang found with the name "${gangName}".\n\n` +
-          'Make sure you spelled the gang name correctly.'
-        );
-        return message.channel.send({ embeds: [errorEmbed] });
+        if (!gang) {
+          const errorEmbed = embeds.error(
+            'Gang Not Found',
+            `No gang found with the name "${gangName}".\n\n` +
+            'Make sure you spelled the gang name correctly or mention a gang member.'
+          );
+          return message.channel.send({ embeds: [errorEmbed] });
+        }
       }
 
       // Get gang leader info
