@@ -69,7 +69,7 @@ module.exports = {
         {
           name: '🍀 **Luck**',
           value: '`.luckhelp` ' +
-            '`.coinflip <amount>` ' +
+            '`.toss <amount>` ' +
             '`.slots <amount>` ' +
             '`.lucky` ',
           inline: true

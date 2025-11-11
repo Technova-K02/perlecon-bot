@@ -3,47 +3,75 @@ const embeds = require('../../utils/embeds');
 const Transaction = require('../../models/Transaction');
 const CasinoLog = require('../../models/CasinoLog');
 
-const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐', '💎', '7️⃣'];
+// Symbol weights based on probability (chance per reel)
+const symbolWeights = [
+  { symbol: '🍒', weight: 18 },  // 18%
+  { symbol: '🍊', weight: 12 },  // 12%
+  { symbol: '🍋', weight: 8 },   // 8%
+  { symbol: '🍇', weight: 5 },   // 5%
+  { symbol: '⭐', weight: 2.5 }, // 2.5%
+  { symbol: '💎', weight: 1.2 }, // 1.2%
+  { symbol: '7️⃣', weight: 0.6 }  // 0.6%
+];
+
+// Payouts for 3-match and 2-match combinations
 const payouts = {
-  '🍒🍒🍒': 5,
-  '🍋🍋🍋': 10,
-  '🍊🍊🍊': 15,
-  '🍇🍇🍇': 20,
-  '⭐⭐⭐': 50,
-  '💎💎💎': 100,
-  '7️⃣7️⃣7️⃣': 777
+  '🍒🍒🍒': 2,
+  '🍊🍊🍊': 3,
+  '🍋🍋🍋': 6,
+  '🍇🍇🍇': 10,
+  '⭐⭐⭐': 20,
+  '💎💎💎': 50,
+  '7️⃣7️⃣7️⃣': 250
 };
+
+const twoMatchPayouts = {
+  '🍒': 1.0,
+  '🍊': 1.3,
+  '🍋': 1.6,
+  '🍇': 2.0,
+  '⭐': 2.8,
+  '💎': 3.2,
+  '7️⃣': 4.0
+};
+
+function getWeightedSymbol() {
+  const totalWeight = symbolWeights.reduce((sum, item) => sum + item.weight, 0);
+  let random = Math.random() * totalWeight;
+
+  for (const item of symbolWeights) {
+    random -= item.weight;
+    if (random <= 0) {
+      return item.symbol;
+    }
+  }
+
+  return symbolWeights[0].symbol; // Fallback
+}
 
 function spinReels() {
   return [
-    symbols[Math.floor(Math.random() * symbols.length)],
-    symbols[Math.floor(Math.random() * symbols.length)],
-    symbols[Math.floor(Math.random() * symbols.length)]
+    getWeightedSymbol(),
+    getWeightedSymbol(),
+    getWeightedSymbol()
   ];
 }
 
 function calculatePayout(reels, betAmount) {
   const combination = reels.join('');
 
-  // Check for exact matches
+  // Check for 3 matching symbols
   if (payouts[combination]) {
     return betAmount * payouts[combination];
   }
 
-  // Check for two matching symbols
+  // Check for 2 matching symbols
   if (reels[0] === reels[1] || reels[1] === reels[2] || reels[0] === reels[2]) {
     const matchingSymbol = reels[0] === reels[1] ? reels[0] :
       reels[1] === reels[2] ? reels[1] : reels[0];
 
-    // Small payout for two matches
-    switch (matchingSymbol) {
-      case '🍒': return Math.floor(betAmount * 0.5);
-      case '🍋': return Math.floor(betAmount * 0.8);
-      case '🍊': return Math.floor(betAmount * 1.2);
-      case '🍇': return Math.floor(betAmount * 1.5);
-      case '⭐': return Math.floor(betAmount * 2);
-      case '💎': return Math.floor(betAmount * 3);
-      case '7️⃣': return Math.floor(betAmount * 5);
+    if (twoMatchPayouts[matchingSymbol]) {
+      return Math.floor(betAmount * twoMatchPayouts[matchingSymbol]);
     }
   }
 
@@ -77,11 +105,10 @@ module.exports = {
     const result = payout > 0 ? 'win' : 'lose';
 
     // Update user balance
-    let updatedUser;
     if (result === 'win') {
-      updatedUser = await economy.addMoney(msg.author.id, payout - bet, 'luck');
+      await economy.addMoney(msg.author.id, payout - bet, 'luck');
     } else {
-      updatedUser = await economy.removeMoney(msg.author.id, bet, 'luck');
+      await economy.removeMoney(msg.author.id, bet, 'luck');
     }
 
     // Log transaction and casino activity
@@ -106,20 +133,26 @@ module.exports = {
     const slotsDisplay = `${reels[0]} | ${reels[1]} | ${reels[2]}`;
 
     let payoutInfo = '';
+    let partial = false;
     if (result === 'win') {
       const combination = reels.join('');
       if (payouts[combination]) {
         payoutInfo = `\n**Jackpot!** ${payouts[combination]}x multiplier`;
       } else {
+        partial = true;
         payoutInfo = `\n**Match!** Partial win`;
       }
     }
 
     const resultEmbed = result === 'win'
-      ? embeds.success(
-        'Slots - You Won',
-        `${slotsDisplay}${payoutInfo}\n\nYou won **${economy.formatMoney(payout)} coins**\n`
-      )
+      ? partial === true ?
+        embeds.warning(
+          'Slots - You Won',
+          `${slotsDisplay}${payoutInfo}\n\nYou won **${economy.formatMoney(payout)} coins**\n`
+        ) : embeds.success(
+          'Slots - You Won',
+          `${slotsDisplay}${payoutInfo}\n\nYou won **${economy.formatMoney(payout)} coins**\n`
+        )
       : embeds.error(
         'Slots - You Lost',
         `${slotsDisplay}\n\nYou lost **${economy.formatMoney(bet)} coins**\n`

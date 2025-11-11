@@ -4,7 +4,7 @@ const Gang = require('../../models/Gang');
 const embeds = require('../../utils/embeds');
 
 module.exports = {
-  name: 'disbandgang',
+  name: 'deletegang',
   description: 'Disband a specific gang by name (Admin/Owner only)',
   async execute(message, args) {
     // Check if user is bot owner or has admin permissions

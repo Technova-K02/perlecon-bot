@@ -15,25 +15,25 @@ module.exports = {
       {
         name: '💰 **Jackpot Payouts** (3 Matching Symbols)',
         value: 
-          '🍒🍒🍒 = **5x** your bet\n' +
+          '🍒🍒🍒 = **3x** your bet\n' +
+          '🍊🍊🍊 = **6x** your bet\n' +
           '🍋🍋🍋 = **10x** your bet\n' +
-          '🍊🍊🍊 = **15x** your bet\n' +
           '🍇🍇🍇 = **20x** your bet\n' +
           '⭐⭐⭐ = **50x** your bet\n' +
           '💎💎💎 = **100x** your bet\n' +
-          '7️⃣7️⃣7️⃣ = **777x** your bet 🔥',
+          '7️⃣7️⃣7️⃣ = **250x** your bet 🔥',
         inline: true
       },
       {
         name: '🎯 **Partial Wins** (2 Matching Symbols)',
         value: 
-          '🍒🍒 = **0.5x** your bet\n' +
-          '🍋🍋 = **0.8x** your bet\n' +
-          '🍊🍊 = **1.2x** your bet\n' +
-          '🍇🍇 = **1.5x** your bet\n' +
-          '⭐⭐ = **2x** your bet\n' +
-          '💎💎 = **3x** your bet\n' +
-          '7️⃣7️⃣ = **5x** your bet',
+          '🍒🍒 = **1.0x** your bet\n' +
+          '🍊🍊 = **1.3x** your bet\n' +
+          '🍋🍋 = **1.6x** your bet\n' +
+          '🍇🍇 = **2.0x** your bet\n' +
+          '⭐⭐ = **2.8x** your bet\n' +
+          '💎💎 = **3.2x** your bet\n' +
+          '7️⃣7️⃣ = **4.0x** your bet',
         inline: true
       },
       // {

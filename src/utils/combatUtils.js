@@ -56,7 +56,7 @@ async function cleanupExpiredKidnappings() {
 function isGangOnRaidCooldown(gang) {
   if (!gang.lastRaidTime) return false;
   
-  const raidCooldown = 2 * 60 * 1000; // 1 minute
+  const raidCooldown = 2 * 60 * 1000; // 2 minute
   return Date.now() - gang.lastRaidTime < raidCooldown;
 }
 

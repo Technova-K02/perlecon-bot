@@ -25,7 +25,7 @@ function getBaseStats(level) {
 module.exports = {
   name: 'raid',
   aliases: ['raidgang'],
-  description: 'Raid another gang\'s base to deal damage and steal coins (1 minute cooldown, leaders only)',
+  description: 'Raid another gang\'s base to deal damage and steal coins (2 minute cooldown, leaders only)',
   async execute(message, args) {
     try {
       // Check if user is kidnapped
@@ -55,7 +55,7 @@ module.exports = {
       //   return message.channel.send({ embeds: [errorEmbed] });
       // }
 
-      // Check raid cooldown (1 minute)
+      // Check raid cooldown (2 minute)
       if (isGangOnRaidCooldown(attackerGang)) {
         const remaining = getRaidCooldownRemaining(attackerGang);
         const errorEmbed = embeds.error('Raid Cooldown', `Your gang must wait ${remaining} seconds before raiding again`);

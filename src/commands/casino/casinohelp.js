@@ -12,8 +12,8 @@ module.exports = {
       '• `slots <amount>` - Spin the reels and match symbols\n' +
       '• `slotshelp` - Learn how to play slots\n\n' +
 
-      '**🪙 Coin Flip:**\n' +
-      '• `coinflip <amount>` - A rigged 40/60 chance game\n\n' +
+      '**🪙 Toss:**\n' +
+      '• `toss <amount>` - A rigged 30/70 chance game\n\n' +
 
       '**🎲 Luck Machines:**\n' +
       '• `lucky <machine> <amount>` - Choose from 6 different machines (a-f)\n' +

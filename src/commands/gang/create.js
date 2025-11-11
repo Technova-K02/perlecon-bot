@@ -45,6 +45,11 @@ module.exports = {
         return message.channel.send({ embeds: [errorEmbed] });
       }
 
+      if (name[0] === '@') {
+        const errorEmbed = embeds.error('Invalid gang name', 'A gang name should start with normal alphabet like .makegang perlecon.');
+        return message.channel.send({ embeds: [errorEmbed] });
+      }
+
       // Create gang and update user
       const gang = await Gang.create({
         name,

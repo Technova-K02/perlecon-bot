@@ -18,7 +18,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildMembers
+    // GatewayIntentBits.GuildMembers
   ]
 });
 
@@ -55,10 +55,10 @@ try {
 // ---- Command List ----
 const commandList = [
   // Admin Commands
-  'disbandgang', 'grant', 'resetgangs',
+  'deletegang', 'grant', 'resetgangs',
 
   // Casino Commands
-  'baccarat', 'bingo', 'blackjack', 'luckhelp', 'luckstats', 'coinflip', 'crash', 'dice',
+  'baccarat', 'bingo', 'blackjack', 'luckhelp', 'luckstats', 'toss', 'crash', 'dice',
   'keno', 'lottery', 'lucky', 'mines', 'plinko', 'poker', 'roulette', 'slots', 'slotshelp', 'wheel',
 
   // Economy Commands
@@ -167,27 +167,27 @@ client.on('messageCreate', async msg => {
 
 
   // Ignore messages from bots and check if the message is in an allowed channel
-  if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
-  const args1 = msg.content.slice(config.prefix.length).trim().split(/ +/);
-  const cmdName1 = args1.shift().toLowerCase();
+  // if (msg.author.bot || !allowedChannels.includes(msg.channel.id)) return;
+  // const args1 = msg.content.slice(config.prefix.length).trim().split(/ +/);
+  // const cmdName1 = args1.shift().toLowerCase();
 
-  if (!msg.content.startsWith(config.prefix) || !commandList.includes(cmdName1)) {
-    // console.log('deletable');
-    try {
-      if (msg.deletable) {
-        setTimeout(async () => {
-          try {
-            await msg.delete();
-          } catch (error) {
-            console.error('Auto-delete error:', error);
-          }
-        }, 500); // 0.5 second delay to avoid rate limits
-      }
-    } catch (error) {
-      console.error('Message deletion check error:', error);
-    }
-    return; // Don't process non-command messages further
-  }
+  // if (!msg.content.startsWith(config.prefix) || !commandList.includes(cmdName1)) {
+  //   // console.log('deletable');
+  //   try {
+  //     if (msg.deletable) {
+  //       setTimeout(async () => {
+  //         try {
+  //           await msg.delete();
+  //         } catch (error) {
+  //           console.error('Auto-delete error:', error);
+  //         }
+  //       }, 500); // 0.5 second delay to avoid rate limits
+  //     }
+  //   } catch (error) {
+  //     console.error('Message deletion check error:', error);
+  //   }
+  //   return; // Don't process non-command messages further
+  // }
 
 
   // Track message count and award XP for all users (not just commands)

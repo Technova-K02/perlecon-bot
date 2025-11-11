@@ -4,8 +4,8 @@ const Transaction = require('../../models/Transaction');
 const CasinoLog = require('../../models/CasinoLog');
 
 module.exports = {
-  name: 'coinflip',
-  description: 'Bet coins on a coinflip',
+  name: 'toss',
+  description: 'Bet coins on a toss',
   async execute(msg, args) {
     const bet = parseInt(args[0]);
     if (isNaN(bet) || bet < 5000) {
@@ -25,7 +25,7 @@ module.exports = {
       return msg.channel.send({ embeds: [errorEmbed] });
     }
 
-    const win = Math.random() < 0.4;
+    const win = Math.random() < 0.3;
     const result = win ? 'heads' : 'tails';
 
     let updatedUser;
@@ -43,14 +43,14 @@ module.exports = {
       to: win ? msg.author.id : null,
       amount: bet,
       type: 'luck',
-      description: `Coinflip: ${result} - ${win ? 'Won' : 'Lost'} ${bet} coins`
+      description: `Toss: ${result} - ${win ? 'Won' : 'Lost'} ${bet} coins`
     });
     await transaction.save();
 
     // Log casino activity
     const casinoLog = new CasinoLog({
       userId: msg.author.id,
-      game: 'coinflip',
+      game: 'toss',
       betAmount: bet,
       result: win ? 'win' : 'lose',
       payout: win ? bet*2 : 0
@@ -59,11 +59,11 @@ module.exports = {
 
     const resultEmbed = win
       ? embeds.success(
-        '**Coinflip**', `You Won **${economy.formatMoney(bet * 2)}**.`
+        '**Toss**', `You Won **${economy.formatMoney(bet * 2)}**.`
         // `The coin landed on **${result}**\nYou won **${} coins**\n\n**New Balance:** ${economy.formatMoney(updatedUser.pocket)} coins`
       )
       : embeds.error(
-        '**Coinflip**', 'You Lost',
+        '**Toss**', 'You Lost',
         // `The coin landed on **${result}**\nYou lost **${economy.formatMoney(bet)} coins**\n\n**New Balance:** ${economy.formatMoney(updatedUser.pocket)} coins`
       );
 
