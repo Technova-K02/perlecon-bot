@@ -18,7 +18,7 @@ function getNextDailyReset(lastClaimTime) {
 
   // If we haven't hit 4pm EST today, use today's reset
   // Otherwise use tomorrow's reset
-  if (estNow < todayReset) {
+  if (lastClaimTime < todayReset) {
     return todayReset.getTime() - (estOffset * 60 * 1000); // Convert back to UTC
   } else {
     const tomorrowReset = new Date(todayReset);
